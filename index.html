@@ -3,95 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>市民服務身份系統CSIS</title>
+    <title>市民服務身份系統 (CSIS) - 市民入口網站</title>
     <style>
+        /* 專業政府機關風格色盤 */
         :root {
-            --bg-crust: #e2e8f0; --bg-mantle: #f8fafc; --bg-base: #ffffff;
-            --bg-surface: #f1f5f9; --text-main: #0f172a; --text-sub: #475569;
-            --accent-blue: #2563eb; --accent-green: #16a34a; --accent-red: #dc2626;
-            --accent-purple: #9333ea;
+            --gov-primary: #004b87;
+            --gov-secondary: #f0f4f8;
+            --gov-text-dark: #333333;
+            --gov-text-muted: #666666;
+            --gov-border: #d1d9e6;
+            --gov-action: #0076a8;
+            --gov-danger: #c9302c;
+            --gov-success: #3c763d;
+            --gov-bg: #eaeff3;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
-        body { background-color: var(--bg-mantle); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
-        header { background-color: var(--bg-crust); padding: 15px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100; text-align: center; }
-        header h1 { color: var(--accent-blue); font-size: 1.3rem; letter-spacing: 1px; }
         
-        .tabs-header { display: flex; background-color: var(--bg-surface); border-bottom: 2px solid var(--bg-crust); }
-        .tab-btn { flex: 1; padding: 15px 10px; background: none; border: none; color: var(--text-sub); font-size: 1rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .tab-btn.active { color: var(--accent-blue); border-bottom: 3px solid var(--accent-blue); }
-        .tab-content { display: none; padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        body { background-color: var(--gov-bg); color: var(--gov-text-dark); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* 頂部導航列 */
+        header { background-color: #ffffff; padding: 20px 30px; border-top: 5px solid var(--gov-primary); border-bottom: 1px solid var(--gov-border); display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        header h1 { color: var(--gov-primary); font-size: 1.4rem; font-weight: 600; letter-spacing: 0.5px; }
+        
+        /* 分頁選單 */
+        .tabs-header { display: flex; background-color: #ffffff; border-bottom: 1px solid var(--gov-border); max-width: 1000px; margin: 20px auto 0; width: 100%; }
+        .tab-btn { flex: 1; padding: 15px 20px; background: none; border: none; border-bottom: 3px solid transparent; color: var(--gov-text-muted); font-size: 1rem; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+        .tab-btn:hover { background-color: var(--gov-secondary); }
+        .tab-btn.active { color: var(--gov-primary); border-bottom-color: var(--gov-primary); font-weight: 700; background-color: transparent; }
+        
+        .tab-content { display: none; max-width: 1000px; margin: 0 auto; width: 100%; padding: 25px 0; }
         .tab-content.active { display: block; }
 
-        .card { background-color: var(--bg-base); border: 1px solid var(--bg-crust); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card-title { color: var(--accent-blue); font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid var(--bg-crust); padding-bottom: 10px;}
+        /* 內容卡片 */
+        .card { background-color: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .card-title { color: var(--gov-primary); font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gov-secondary); }
         
-        /* 靜態 IC 卡片設計（含照片區） */
-        .ic-card-container { display: none; flex-direction: column; align-items: center; margin-bottom: 25px; }
-        .ic-card { width: 100%; max-width: 360px; height: 215px; background: linear-gradient(135deg, #1e3a8a, #3b82f6); border-radius: 16px; color: white; padding: 20px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; }
-        .ic-left { display: flex; flex-direction: column; justify-content: space-between; height: 100%; flex: 1; }
-        .ic-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #fbbf24, #d97706); border-radius: 4px; border: 1px solid #b45309; position: relative; }
-        .ic-header { font-size: 0.8rem; opacity: 0.9; }
-        .ic-number { font-size: 1.1rem; font-family: monospace; letter-spacing: 1px; }
-        .ic-name { font-size: 1rem; text-transform: uppercase; font-weight: bold; }
+        /* 擬真 IC 證件設計 */
+        .ic-card-container { display: none; flex-direction: column; align-items: center; margin-bottom: 30px; }
+        .ic-card { width: 100%; max-width: 420px; height: 260px; background: #eef5eb; background-image: repeating-linear-gradient(45deg, #eef5eb 25%, #e1ebe2 25%, #e1ebe2 50%, #eef5eb 50%, #eef5eb 75%, #e1ebe2 75%, #e1ebe2 100%); background-size: 4px 4px; border-radius: 8px; border: 1px solid #b5c7b7; padding: 25px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; flex-direction: row-reverse; justify-content: space-between; align-items: flex-start; }
         
-        /* 證件照樣式 */
-        .ic-photo-box { width: 90px; height: 115px; background-color: #cbd5e1; border: 2px solid white; border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; margin-left: 15px; }
-        .ic-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        .ic-left { display: flex; flex-direction: column; justify-content: space-between; height: 100%; flex: 1; text-align: right; margin-right: 15px;}
+        .ic-header { font-size: 0.9rem; color: #2e5934; font-weight: 700; letter-spacing: 1px; border-bottom: 1px solid #2e5934; padding-bottom: 4px; margin-bottom: 15px; text-transform: uppercase; }
+        .ic-chip { width: 45px; height: 35px; background: #d4af37; border-radius: 4px; border: 1px solid #aa8c2c; margin-bottom: 15px; margin-left: auto; }
+        .ic-field { margin-bottom: 8px; }
+        .ic-label { font-size: 0.65rem; color: #555; text-transform: uppercase; }
+        .ic-number { font-size: 1.2rem; font-family: "Courier New", Courier, monospace; font-weight: bold; color: #111; }
+        .ic-name { font-size: 1.1rem; font-weight: bold; color: #111; }
+        
+        .ic-photo-box { width: 105px; height: 135px; background-color: #ddd; border: 1px solid #999; padding: 2px; background: #fff; }
+        .ic-photo-box img { width: 100%; height: 100%; object-fit: cover; filter: contrast(1.1) grayscale(0.2); }
 
         /* 個人資料列表 */
-        .info-grid { display: grid; grid-template-columns: 120px 1fr; gap: 12px; margin-top: 20px; }
-        .info-label { color: var(--text-sub); font-weight: bold; text-align: right; }
-        .info-value { color: var(--text-main); font-weight: bold; border-bottom: 1px solid var(--bg-surface); padding-bottom: 5px; }
+        .info-grid { display: grid; grid-template-columns: 140px 1fr; gap: 15px 10px; margin-top: 30px; background-color: var(--gov-secondary); padding: 20px; border-radius: 4px; border: 1px solid var(--gov-border); }
+        .info-label { color: var(--gov-text-muted); font-weight: 600; }
+        .info-value { color: var(--gov-text-dark); font-weight: 500; }
 
-        /* 表單與其他元件 */
-        .form-group { margin-bottom: 15px; }
-        label { display: block; color: var(--text-sub); margin-bottom: 5px; font-size: 0.9rem; }
-        input, select { background-color: var(--bg-surface); color: var(--text-main); border: 1px solid var(--bg-crust); padding: 12px; border-radius: 8px; width: 100%; font-size: 1rem; outline: none; }
-        button { padding: 14px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; width: 100%; }
+        /* 表單元件 */
+        .form-group { margin-bottom: 20px; }
+        label { display: block; color: var(--gov-text-dark); margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
+        input[type="text"], input[type="date"], select { background-color: #ffffff; border: 1px solid #bbbbbb; padding: 10px 12px; border-radius: 3px; width: 100%; font-size: 1rem; transition: border-color 0.2s; }
+        input:focus, select:focus { border-color: var(--gov-primary); outline: none; box-shadow: 0 0 0 2px rgba(0, 75, 135, 0.2); }
         
-        .btn-primary { background-color: var(--accent-blue); color: #ffffff; }
-        .btn-success { background-color: var(--accent-green); color: #ffffff; }
-        .btn-danger { background-color: var(--accent-red); color: #ffffff; }
-        .btn-large { font-size: 1.2rem; padding: 20px; margin-bottom: 15px; }
+        button { padding: 12px 24px; border: none; border-radius: 3px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: background-color 0.2s; display: inline-block; }
+        .btn-primary { background-color: var(--gov-action); color: #ffffff; }
+        .btn-primary:hover { background-color: #005a84; }
+        .btn-success { background-color: var(--gov-success); color: #ffffff; }
+        .btn-success:hover { background-color: #2b542c; }
+        .btn-danger { background-color: var(--gov-danger); color: #ffffff; }
+        .btn-danger:hover { background-color: #9c2522; }
+        .btn-outline { background-color: #ffffff; color: var(--gov-text-dark); border: 1px solid #cccccc; }
+        .btn-outline:hover { background-color: #f5f5f5; }
         
-        .timer-banner { background-color: var(--accent-red); color: white; text-align: center; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; display: none; }
-        .back-btn { background-color: var(--bg-crust); color: var(--text-main); margin-bottom: 15px; }
-        .tag { padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; }
-        .tag-pending { background-color: #f59e0b; color: #ffffff; }
-        .tag-approved { background-color: var(--accent-green); color: #ffffff; }
+        .btn-block { width: 100%; margin-bottom: 15px; padding: 15px; font-size: 1.1rem; text-align: left; background-color: #ffffff; border: 1px solid var(--gov-border); color: var(--gov-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn-block:hover { background-color: var(--gov-secondary); border-color: var(--gov-primary); }
+        
+        .timer-banner { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 12px; border-radius: 3px; font-weight: bold; margin-bottom: 20px; display: none; text-align: center; }
+        
+        /* 申請紀錄樣式 */
+        .record-card { padding: 15px 20px; background: #ffffff; border: 1px solid var(--gov-border); border-left: 4px solid var(--gov-primary); margin-bottom: 15px; display: flex; align-items: flex-start; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .tag { padding: 4px 10px; font-size: 0.8rem; font-weight: bold; border-radius: 2px; display: inline-block; }
+        .tag-pending { background-color: #fcf8e3; color: #8a6d3b; border: 1px solid #faebcc; }
+        .tag-approved { background-color: #dff0d8; color: #3c763d; border: 1px solid #d6e9c6; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>市民服務身份系統CSIS</h1>
+        <h1>市民服務身份系統 CSIS</h1>
     </header>
 
     <div class="tabs-header">
-        <button class="tab-btn active" onclick="switchTab('tab-profile')">已綁定身份帳號</button>
-        <button class="tab-btn" onclick="switchTab('tab-services')">申請服務</button>
-        <button class="tab-btn" onclick="switchTab('tab-search')">查詢進度</button>
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-profile')">身份檔案</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-services')">網上申領服務</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-search')">申請進度查詢</button>
     </div>
 
-    <!-- 分頁一：已綁定身份帳號 -->
     <div id="tab-profile" class="tab-content active">
         <div class="card">
-            <div id="bind-section" style="display: none; text-align: center; padding: 20px 0;">
-                <p style="color: var(--text-sub); margin-bottom: 15px;">尚未綁定身份帳號。請輸入實體卡號或智能編號進行綁定：</p>
+            <div id="bind-section" style="display: none; padding: 40px 20px; text-align: center;">
+                <h2 style="margin-bottom: 15px; color: var(--gov-text-dark); font-size: 1.3rem;">登入身份檔案</h2>
+                <p style="color: var(--gov-text-muted); margin-bottom: 25px;">請輸入您的實體卡號或智能編號以檢視個人檔案。</p>
                 <div style="display: flex; gap: 10px; max-width: 400px; margin: 0 auto;">
-                    <input type="text" id="bind-card-input" placeholder="輸入卡號">
-                    <button class="btn-primary" style="width: 120px;" onclick="bindMobileCard()">綁定</button>
+                    <input type="text" id="bind-card-input" placeholder="例如：1234567890" style="flex: 1;">
+                    <button class="btn-primary" onclick="bindMobileCard()">登入</button>
                 </div>
             </div>
 
-            <!-- IC 卡與照片顯示區域 -->
             <div id="ic-card-display" class="ic-card-container">
                 <div class="ic-card">
                     <div class="ic-left">
-                        <div class="ic-header">CSIS 智能身份卡</div>
+                        <div class="ic-header">Hong Kong CSIS Identity</div>
                         <div class="ic-chip"></div>
-                        <div>
+                        <div class="ic-field">
+                            <div class="ic-label">Smart Code</div>
                             <div class="ic-number" id="display-smartcode">---- ----</div>
+                        </div>
+                        <div class="ic-field">
+                            <div class="ic-label">Name</div>
                             <div class="ic-name" id="display-name">---</div>
                         </div>
                     </div>
@@ -102,50 +130,59 @@
 
                 <div style="width: 100%;">
                     <div class="info-grid">
-                        <div class="info-label">中文/英文姓名</div> <div class="info-value" id="info-name">--</div>
-                        <div class="info-label">實體卡號</div> <div class="info-value" id="info-cardid">--</div>
+                        <div class="info-label">登記姓名</div> <div class="info-value" id="info-name">--</div>
+                        <div class="info-label">實體憑證號碼</div> <div class="info-value" id="info-cardid">--</div>
                         <div class="info-label">出生日期</div> <div class="info-value" id="info-dob">--</div>
-                        <div class="info-label">性別</div> <div class="info-value" id="info-gender">--</div>
-                        <div class="info-label">居住地區</div> <div class="info-value" id="info-region">--</div>
+                        <div class="info-label">登記性別</div> <div class="info-value" id="info-gender">--</div>
+                        <div class="info-label">登記住址區域</div> <div class="info-value" id="info-region">--</div>
                     </div>
-                    <button class="btn-danger" style="margin-top: 25px;" onclick="unbindCard()">解除綁定</button>
+                    <div style="text-align: right; margin-top: 20px;">
+                        <button class="btn-outline" onclick="unbindCard()">登出系統</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 分頁二：申請服務 -->
     <div id="tab-services" class="tab-content">
         <div class="card">
+            <div class="card-title">申領及更換身份證明文件</div>
+            
             <div id="app-buttons-container">
-                <button class="btn-primary btn-large" onclick="openApplicationForm('new')">申請新證件</button>
-                <button class="btn-primary btn-large" style="background-color: var(--accent-purple);" onclick="openApplicationForm('replace')">申請更換領取身份證</button>
+                <p style="color: var(--gov-text-muted); margin-bottom: 20px;">請選擇您需要的服務。遞交申請後，請攜帶所需文件至自助終端機完成簽發手續。</p>
+                <button class="btn-block" onclick="openApplicationForm('new')">
+                    <strong>首辦智能身份證明</strong><br>
+                    <span style="font-size: 0.9rem; color: var(--gov-text-muted);">適用於首次登記或未曾持有智能卡之市民</span>
+                </button>
+                <button class="btn-block" onclick="openApplicationForm('replace')">
+                    <strong>換領 / 補發智能身份證明</strong><br>
+                    <span style="font-size: 0.9rem; color: var(--gov-text-muted);">適用於晶片過期、遺失、資料變更或卡片損毀</span>
+                </button>
             </div>
 
             <div id="timer-display" class="timer-banner">
-                表格填寫剩餘時間: <span id="time-left">10:00</span>
+                系統安全提示：為保護隱私，此表格將於 <span id="time-left">10:00</span> 後自動登出重置。
             </div>
 
             <div id="form-container" style="display: none;">
-                <button class="back-btn" onclick="resetApplicationView()">返回選項</button>
+                <button class="btn-outline" style="margin-bottom: 20px;" onclick="resetApplicationView()">← 返回服務選單</button>
 
-                <!-- 申請新證件 -->
                 <form id="form-app-new" onsubmit="handleApplicationSubmit(event, 'NEW')" style="display: none;">
-                    <div class="card-title">現正辦理：首辦智能身份證</div>
+                    <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：首辦智能身份證</h3>
                     <div class="form-group"><label>中文 / 英文姓名 (必填)</label><input type="text" id="app-name" required></div>
                     <div class="form-group"><label>出生日期 (必填)</label><input type="date" id="app-dob" required></div>
                     <div class="form-group"><label>性別 (必填)</label>
-                        <select id="app-gender"><option value="男">男</option><option value="女">女</option><option value="其他">其他</option></select>
+                        <select id="app-gender"><option value="男">男</option><option value="女">女</option></select>
                     </div>
-                    <div class="form-group"><label>居住地區 (必填)</label><input type="text" id="app-region" required></div>
-                    <div class="form-group"><label>上傳個人身份證照片網址/檔案 (必填)</label><input type="text" id="app-photo" placeholder="請輸入圖片網址 (URL)" required></div>
-                    <button type="submit" class="btn-success">提交新證件申請</button>
+                    <div class="form-group"><label>居住地區 (必填)</label><input type="text" id="app-region" placeholder="例如：九龍區" required></div>
+                    <div class="form-group"><label>個人證件照 (請提供圖片網址)</label><input type="text" id="app-photo" placeholder="https://..." required></div>
+                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
+                    <button type="submit" class="btn-success">確認並遞交申請</button>
                 </form>
 
-                <!-- 換領證件 -->
                 <form id="form-app-replace" onsubmit="handleApplicationSubmit(event, 'REPLACE')" style="display: none;">
-                    <div class="card-title" style="color: var(--accent-purple);">現正辦理：換領智能身份證</div>
-                    <div class="form-group"><label>原實體卡號 / 舊智能卡編號 (必填)</label><input type="text" id="app-old-id" required></div>
+                    <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：換領智能身份證</h3>
+                    <div class="form-group"><label>原有實體卡號或智能卡編號 (必填)</label><input type="text" id="app-old-id" required></div>
                     <div class="form-group"><label>姓名 (必填)</label><input type="text" id="app-rep-name" required></div>
                     <div class="form-group"><label>換證原因 (必填)</label>
                         <select id="app-rep-reason">
@@ -153,26 +190,26 @@
                             <option value="遺失補領">遺失補領</option><option value="更新資料">個人資料變更</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>更新個人身份證照片網址 (必填)</label><input type="text" id="app-rep-photo" placeholder="請輸入圖片網址 (URL)" required></div>
-                    <button type="submit" class="btn-success" style="background-color: var(--accent-purple);">提交換證申請</button>
+                    <div class="form-group"><label>更新證件照 (請提供圖片網址)</label><input type="text" id="app-rep-photo" placeholder="https://..." required></div>
+                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
+                    <button type="submit" class="btn-success">確認並遞交申請</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- 分頁三：查詢進度 -->
     <div id="tab-search" class="tab-content">
         <div class="card">
-            <div class="card-title">查詢我的申請進度</div>
+            <div class="card-title">查詢申請進度</div>
+            <p style="color: var(--gov-text-muted); margin-bottom: 15px;">請輸入申請人的登記姓名以查詢系統處理進度。</p>
             <div class="form-group" style="display: flex; gap: 10px;">
-                <input type="text" id="search-app-name" placeholder="輸入申請人姓名">
-                <button class="btn-primary" style="width: 120px;" onclick="searchApplication()">查詢</button>
+                <input type="text" id="search-app-name" placeholder="輸入申請人姓名" style="flex: 1; max-width: 400px;">
+                <button class="btn-primary" onclick="searchApplication()">查詢紀錄</button>
             </div>
-            <div id="search-result" style="color: var(--text-sub); font-size: 0.95rem; margin-top: 15px;"></div>
+            <div id="search-result" style="margin-top: 25px;"></div>
         </div>
     </div>
 
-    <!-- Firebase SDK (v8) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
@@ -199,12 +236,13 @@
             await renderMobileBoundProfile();
         };
 
-        function switchTab(tabId) {
+        // 修正點：加入 e 參數，確保跨瀏覽器相容性
+        function switchTab(e, tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
-            event.currentTarget.classList.add('active');
+            e.currentTarget.classList.add('active');
 
             if(tabId !== 'tab-services') {
                 resetApplicationView();
@@ -225,7 +263,7 @@
             const record = await DB.getIdentity(boundCardId);
             if (!record) {
                 localStorage.removeItem('my_bound_card_id');
-                alert("綁定卡號無效或已被注銷，系統已重置。");
+                alert("綁定資料已過期或被注銷，請重新登入。");
                 renderMobileBoundProfile();
                 return;
             }
@@ -233,20 +271,20 @@
             bindSection.style.display = 'none';
             icCardDisplay.style.display = 'flex';
 
-            document.getElementById('display-smartcode').innerText = record.smart_code || "CSIS-8888";
+            document.getElementById('display-smartcode').innerText = record.smart_code || "未分配";
             document.getElementById('display-name').innerText = record.name;
-            document.getElementById('display-photo').src = record.photo || "https://via.placeholder.com/90x115?text=NO+PHOTO";
+            document.getElementById('display-photo').src = record.photo || "https://via.placeholder.com/105x135?text=NO+PHOTO";
             
             document.getElementById('info-name').innerText = record.name;
             document.getElementById('info-cardid').innerText = record.card_id;
-            document.getElementById('info-dob').innerText = record.dob;
-            document.getElementById('info-gender').innerText = record.gender;
-            document.getElementById('info-region').innerText = record.region;
+            document.getElementById('info-dob').innerText = record.dob || "未提供";
+            document.getElementById('info-gender').innerText = record.gender || "未提供";
+            document.getElementById('info-region').innerText = record.region || "未提供";
         }
 
         async function bindMobileCard() {
             const input = document.getElementById('bind-card-input').value.trim();
-            if (!input) return alert("請輸入卡號！");
+            if (!input) return alert("請輸入號碼！");
             let record = await DB.getIdentity(input);
             if (!record) {
                 const all = await DB.getAllIdentities();
@@ -254,15 +292,14 @@
             }
             if (record) {
                 localStorage.setItem('my_bound_card_id', record.card_id);
-                alert(`成功綁定身份帳號：${record.name}`);
                 await renderMobileBoundProfile();
             } else {
-                alert("系統中找不到該記錄。");
+                alert("系統中找不到該記錄，請確認輸入是否正確。");
             }
         }
 
         function unbindCard() {
-            if(confirm("確定要解除綁定此設備上的身份帳號嗎？")) {
+            if(confirm("確定要登出系統嗎？")) {
                 localStorage.removeItem('my_bound_card_id');
                 renderMobileBoundProfile();
             }
@@ -306,7 +343,7 @@
                 updateDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(formTimer);
-                    alert("表格已逾時(10分鐘)，為保護個人資料，系統已自動重設。");
+                    alert("為保障資料安全，表單已逾時重置。");
                     resetApplicationView();
                 }
             }, 1000);
@@ -330,7 +367,7 @@
                 appData.photo = document.getElementById('app-rep-photo').value.trim();
             }
             await DB.addApplication(appData);
-            alert(`申請已成功提交！\n申請編號: ${appId}\n請攜帶相關文件至終端機完成手續。`);
+            alert(`✅ 申請已成功遞交！\n\n系統參考編號: ${appId}\n請攜帶相關證明文件至終端機完成手續。`);
             
             resetApplicationView();
         }
@@ -339,20 +376,20 @@
             const queryName = document.getElementById('search-app-name').value.trim();
             const resDiv = document.getElementById('search-result');
             if (!queryName) return alert("請輸入姓名查詢");
-            resDiv.innerText = "查詢中...";
+            resDiv.innerText = "系統查詢中...";
             const apps = await DB.getApplications();
             const matches = apps.filter(a => a.name === queryName);
             if (matches.length === 0) {
-                resDiv.innerHTML = `<span style="color:var(--accent-red)">未找到相關紀錄。</span>`;
+                resDiv.innerHTML = `<span style="color:var(--gov-danger)">未找到相關紀錄。請確定姓名輸入正確。</span>`;
             } else {
                 resDiv.innerHTML = matches.map(a => `
-                    <div style="padding: 12px; background:var(--bg-surface); border-radius:8px; margin-bottom:10px; border: 1px solid var(--bg-crust); display: flex; align-items: center; justify-content: space-between;">
+                    <div class="record-card">
                         <div>
-                            <div style="margin-bottom: 5px;"><b>申請種類:</b> ${a.type === 'NEW' ? '首辦新證' : '換領證件'}</div>
-                            <div style="margin-bottom: 5px;"><b>提交時間:</b> ${a.timestamp}</div>
-                            <div><b>狀態:</b> ${a.status === 'PENDING' ? '<span class="tag tag-pending">待審核</span>' : '<span class="tag tag-approved">已完成</span>'}</div>
+                            <div style="margin-bottom: 8px; font-size:1.1rem; color:var(--gov-primary);"><b>${a.type === 'NEW' ? '首辦智能身份證' : '換領智能身份證'}</b></div>
+                            <div style="margin-bottom: 5px; color:var(--gov-text-muted);">遞交時間: ${a.timestamp}</div>
+                            <div>處理狀態: ${a.status === 'PENDING' ? '<span class="tag tag-pending">待審核 / 等待終端機簽發</span>' : '<span class="tag tag-approved">手續已完成</span>'}</div>
                         </div>
-                        ${a.photo ? `<img src="${a.photo}" style="width: 50px; height: 65px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1;">` : ''}
+                        ${a.photo ? `<img src="${a.photo}" style="width: 60px; height: 80px; object-fit: cover; border: 1px solid #ddd; padding: 2px;">` : ''}
                     </div>`).join('');
             }
         }
