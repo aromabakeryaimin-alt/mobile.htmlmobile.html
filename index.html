@@ -19,21 +19,6 @@
         
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
         body { background-color: var(--gov-bg); color: var(--gov-text-dark); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* 系統全局廣播條 */
-        #broadcast-banner {
-            background-color: #d9534f;
-            color: #ffffff;
-            padding: 12px 20px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1rem;
-            display: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            position: sticky;
-            top: 0;
-            z-index: 999;
-        }
 
         header { background-color: #ffffff; padding: 20px 30px; border-top: 5px solid var(--gov-primary); border-bottom: 1px solid var(--gov-border); display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         header h1 { color: var(--gov-primary); font-size: 1.4rem; font-weight: 600; letter-spacing: 0.5px; }
@@ -49,7 +34,6 @@
         .card { background-color: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
         .card-title { color: var(--gov-primary); font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gov-secondary); }
         
-        /* 個人資料列表 */
         .info-grid { display: grid; grid-template-columns: 140px 1fr; gap: 15px 10px; margin-top: 10px; background-color: var(--gov-secondary); padding: 20px; border-radius: 4px; border: 1px solid var(--gov-border); }
         .info-label { color: var(--gov-text-muted); font-weight: 600; }
         .info-value { color: var(--gov-text-dark); font-weight: 500; }
@@ -71,12 +55,37 @@
         .btn-block:hover { background-color: var(--gov-secondary); border-color: var(--gov-primary); }
         
         .timer-banner { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 12px; border-radius: 3px; font-weight: bold; margin-bottom: 20px; display: none; text-align: center; }
+
+        /* 自訂長方形提示框 UI (取代原生 HTML alert/confirm) */
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 40, 70, 0.6);
+            display: none; justify-content: center; align-items: center; z-index: 10000;
+            padding: 20px;
+        }
+        .custom-modal-box {
+            background-color: #ffffff; border-radius: 4px; border: 1px solid var(--gov-border);
+            width: 100%; max-width: 460px; padding: 25px 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+        .custom-modal-text {
+            font-size: 1.05rem; color: #222222; margin-bottom: 25px; line-height: 1.6;
+            white-space: pre-wrap; font-weight: 500; text-align: left;
+        }
+        .custom-modal-actions {
+            display: flex; gap: 10px; justify-content: center;
+        }
+        .custom-modal-btn {
+            background-color: #003366; color: #ffffff; border: none;
+            padding: 11px 20px; border-radius: 3px; font-weight: 600;
+            cursor: pointer; font-size: 1rem; flex: 1; transition: background-color 0.2s;
+        }
+        .custom-modal-btn:hover { background-color: #002244; }
+        .custom-modal-btn.btn-cancel { background-color: #6c757d; }
+        .custom-modal-btn.btn-cancel:hover { background-color: #5a6268; }
     </style>
 </head>
 <body>
-
-    <!-- 全局廣播公告區條 -->
-    <div id="broadcast-banner">📢 系統提示：<span id="broadcast-text"></span></div>
 
     <header>
         <h1>市民服務身份系統 CSIS</h1>
@@ -98,7 +107,6 @@
                 </div>
             </div>
 
-            <!-- 取消 ID 卡圖案，直接保留個人資料清單 -->
             <div id="ic-card-display" style="display: none; flex-direction: column;">
                 <div class="card-title">已登記個人檔案資料</div>
                 <div class="info-grid">
@@ -144,7 +152,6 @@
             <div id="form-container" style="display: none;">
                 <button class="btn-outline" style="margin-bottom: 20px;" onclick="resetApplicationView()">← 返回服務選單</button>
 
-                <!-- 首辦表格 -->
                 <form id="form-app-new" onsubmit="handleApplicationSubmit(event, 'NEW')" style="display: none;">
                     <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：首辦智能身份證</h3>
                     <div class="form-group"><label>中文 / 英文姓名 (必填)</label><input type="text" id="app-name" required></div>
@@ -158,7 +165,6 @@
                     <button type="submit" class="btn-success">確認並遞交申請</button>
                 </form>
 
-                <!-- 換領表格 -->
                 <form id="form-app-replace" onsubmit="handleApplicationSubmit(event, 'REPLACE')" style="display: none;">
                     <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：換領智能身份證</h3>
                     <div class="form-group"><label>原有實體卡號或智能卡編號 (必填)</label><input type="text" id="app-old-id" required></div>
@@ -174,7 +180,6 @@
                     <button type="submit" class="btn-success">確認並遞交申請</button>
                 </form>
 
-                <!-- 直接修改資料表格 (無需審核) -->
                 <form id="form-app-edit" onsubmit="handleDirectEditSubmit(event)" style="display: none;">
                     <h3 style="margin-bottom: 10px; color: var(--gov-primary);">變更個人登記資料 (即時保存)</h3>
                     <p style="color: var(--gov-text-muted); margin-bottom: 20px; font-size:0.9rem;">依據系統規範，此處僅供更改「登記地區」及「電話號碼」。</p>
@@ -184,6 +189,17 @@
                     <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
                     <button type="submit" class="btn-primary">保存並即時更新</button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自訂提示框 (長方形區域，深藍色按鈕) -->
+    <div id="custom-alert-modal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div id="custom-alert-text" class="custom-modal-text"></div>
+            <div class="custom-modal-actions">
+                <button id="custom-btn-confirm" class="custom-modal-btn" onclick="closeCustomModal(true)">確認</button>
+                <button id="custom-btn-cancel" class="custom-modal-btn btn-cancel" style="display:none;" onclick="closeCustomModal(false)">取消</button>
             </div>
         </div>
     </div>
@@ -210,23 +226,52 @@
         };
 
         let formTimer = null;
+        let lastBroadcastMsg = "";
+        let modalCallback = null;
         const TIMEOUT_SECONDS = 600;
+
+        /* 自訂長方形提示框邏輯 */
+        function showCustomAlert(msg, onConfirm) {
+            document.getElementById('custom-alert-text').innerText = msg;
+            document.getElementById('custom-btn-cancel').style.display = 'none';
+            document.getElementById('custom-btn-confirm').innerText = '確認';
+            modalCallback = onConfirm || null;
+            document.getElementById('custom-alert-modal').style.display = 'flex';
+        }
+
+        function showCustomConfirm(msg, onConfirm) {
+            document.getElementById('custom-alert-text').innerText = msg;
+            document.getElementById('custom-btn-cancel').style.display = 'block';
+            document.getElementById('custom-btn-confirm').innerText = '確認';
+            modalCallback = onConfirm || null;
+            document.getElementById('custom-alert-modal').style.display = 'flex';
+        }
+
+        function closeCustomModal(isConfirmed) {
+            document.getElementById('custom-alert-modal').style.display = 'none';
+            if (modalCallback) {
+                const cb = modalCallback;
+                modalCallback = null;
+                cb(isConfirmed);
+            }
+        }
 
         window.onload = async () => {
             await renderMobileBoundProfile();
             listenBroadcast();
         };
 
-        // 監聽後台發布的訊息廣播
+        /* 監聽後台系統廣播訊息，彈出長方形提示框 */
         function listenBroadcast() {
             database.ref('/broadcast').on('value', (snap) => {
                 const data = snap.val();
-                const banner = document.getElementById('broadcast-banner');
                 if (data && data.text) {
-                    document.getElementById('broadcast-text').innerText = data.text;
-                    banner.style.display = 'block';
+                    if (data.text !== lastBroadcastMsg) {
+                        lastBroadcastMsg = data.text;
+                        showCustomAlert("📢 系統廣播訊息：\n\n" + data.text);
+                    }
                 } else {
-                    banner.style.display = 'none';
+                    lastBroadcastMsg = "";
                 }
             });
         }
@@ -257,7 +302,7 @@
             const record = await DB.getIdentity(boundCardId);
             if (!record) {
                 localStorage.removeItem('my_bound_card_id');
-                alert("綁定資料已過期或被注銷，請重新登入。");
+                showCustomAlert("綁定資料已過期或被注銷，請重新登入。");
                 renderMobileBoundProfile();
                 return;
             }
@@ -276,7 +321,7 @@
 
         async function bindMobileCard() {
             const input = document.getElementById('bind-card-input').value.trim();
-            if (!input) return alert("請輸入號碼！");
+            if (!input) return showCustomAlert("請輸入號碼！");
             let record = await DB.getIdentity(input);
             if (!record) {
                 const all = await DB.getAllIdentities();
@@ -286,15 +331,17 @@
                 localStorage.setItem('my_bound_card_id', record.card_id);
                 await renderMobileBoundProfile();
             } else {
-                alert("系統中找不到該記錄，請確認輸入是否正確。");
+                showCustomAlert("系統中找不到該記錄，請確認輸入是否正確。");
             }
         }
 
         function unbindCard() {
-            if(confirm("確定要登出系統嗎？")) {
-                localStorage.removeItem('my_bound_card_id');
-                renderMobileBoundProfile();
-            }
+            showCustomConfirm("確定要登出系統嗎？", (confirmed) => {
+                if (confirmed) {
+                    localStorage.removeItem('my_bound_card_id');
+                    renderMobileBoundProfile();
+                }
+            });
         }
 
         function openApplicationForm(type) {
@@ -337,7 +384,7 @@
                 updateDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(formTimer);
-                    alert("為保障資料安全，表單已逾時重置。");
+                    showCustomAlert("為保障資料安全，表單已逾時重置。");
                     resetApplicationView();
                 }
             }, 1000);
@@ -345,59 +392,61 @@
 
         async function handleApplicationSubmit(e, type) {
             e.preventDefault();
-            
-            // 提交警告與法律聲明
             const warningMsg = "⚠️ 警告及法律聲明：\n根據相關法例，任何人士故意填報虛假或誤導性資料，即屬違法犯罪行為。一經定罪，最高可被判處罰款及監禁。\n\n請確認以上資料真實無誤，是否確定要提交申請？";
-            if (!confirm(warningMsg)) return;
+            
+            showCustomConfirm(warningMsg, async (confirmed) => {
+                if (!confirmed) return;
 
-            const appId = 'APP-' + Date.now();
-            let appData = { id: appId, type: type, status: 'PENDING', timestamp: new Date().toLocaleString('zh-HK') };
-            
-            if (type === 'NEW') {
-                appData.name = document.getElementById('app-name').value.trim();
-                appData.dob = document.getElementById('app-dob').value;
-                appData.gender = document.getElementById('app-gender').value;
-                appData.phone = document.getElementById('app-phone').value.trim();
-                appData.region = document.getElementById('app-region').value.trim();
-            } else {
-                appData.oldCardId = document.getElementById('app-old-id').value.trim();
-                appData.name = document.getElementById('app-rep-name').value.trim();
-                appData.phone = document.getElementById('app-rep-phone').value.trim();
-                appData.reason = document.getElementById('app-rep-reason').value;
-            }
-            await DB.addApplication(appData);
-            alert(`✅ 申請已成功遞交！\n\n系統參考編號: ${appId}\n請耐心等待管理員審核簽發。`);
-            
-            resetApplicationView();
+                const appId = 'APP-' + Date.now();
+                let appData = { id: appId, type: type, status: 'PENDING', timestamp: new Date().toLocaleString('zh-HK') };
+                
+                if (type === 'NEW') {
+                    appData.name = document.getElementById('app-name').value.trim();
+                    appData.dob = document.getElementById('app-dob').value;
+                    appData.gender = document.getElementById('app-gender').value;
+                    appData.phone = document.getElementById('app-phone').value.trim();
+                    appData.region = document.getElementById('app-region').value.trim();
+                } else {
+                    appData.oldCardId = document.getElementById('app-old-id').value.trim();
+                    appData.name = document.getElementById('app-rep-name').value.trim();
+                    appData.phone = document.getElementById('app-rep-phone').value.trim();
+                    appData.reason = document.getElementById('app-rep-reason').value;
+                }
+                await DB.addApplication(appData);
+                showCustomAlert(`✅ 申請已成功遞交！\n\n系統參考編號: ${appId}\n請耐心等待管理員審核簽發。`);
+                
+                resetApplicationView();
+            });
         }
 
-        // 免審核：直接更新地區及電話號碼
         async function handleDirectEditSubmit(e) {
             e.preventDefault();
-            
             const warningMsg = "⚠️ 警告及法律聲明：\n根據《身份登記條例》，任何人故意提供虛假或誤導性資料，即屬違法犯罪行為。一經定罪，最高可被判處罰款及監禁。\n\n請確認資料真實無誤，是否確定要提交？";
-            if (!confirm(warningMsg)) return;
-
-            const inputId = document.getElementById('edit-card-id').value.trim();
-            const newRegion = document.getElementById('edit-region').value.trim();
-            const newPhone = document.getElementById('edit-phone').value.trim();
-
-            let record = await DB.getIdentity(inputId);
-            if (!record) {
-                const all = await DB.getAllIdentities();
-                record = all.find(i => i.smart_code === inputId || i.card_id === inputId);
-            }
-
-            if (!record) {
-                alert("錯誤：系統中未找到該憑證號碼或智能編號紀錄。");
-                return;
-            }
-
-            await DB.updateIdentityDirectly(record.card_id, newRegion, newPhone);
-            alert("✅ 個人資料已成功保存並即時生效！");
             
-            resetApplicationView();
-            await renderMobileBoundProfile();
+            showCustomConfirm(warningMsg, async (confirmed) => {
+                if (!confirmed) return;
+
+                const inputId = document.getElementById('edit-card-id').value.trim();
+                const newRegion = document.getElementById('edit-region').value.trim();
+                const newPhone = document.getElementById('edit-phone').value.trim();
+
+                let record = await DB.getIdentity(inputId);
+                if (!record) {
+                    const all = await DB.getAllIdentities();
+                    record = all.find(i => i.smart_code === inputId || i.card_id === inputId);
+                }
+
+                if (!record) {
+                    showCustomAlert("錯誤：系統中未找到該憑證號碼或智能編號紀錄。");
+                    return;
+                }
+
+                await DB.updateIdentityDirectly(record.card_id, newRegion, newPhone);
+                showCustomAlert("✅ 個人資料已成功保存並即時生效！");
+                
+                resetApplicationView();
+                await renderMobileBoundProfile();
+            });
         }
     </script>
 </body>
