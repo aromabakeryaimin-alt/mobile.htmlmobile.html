@@ -40,7 +40,7 @@
 
         .form-group { margin-bottom: 20px; }
         label { display: block; color: var(--gov-text-dark); margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
-        input[type="text"], input[type="date"], input[type="tel"], select { background-color: #ffffff; border: 1px solid #bbbbbb; padding: 10px 12px; border-radius: 3px; width: 100%; font-size: 1rem; transition: border-color 0.2s; }
+        input[type="text"], input[type="date"], input[type="tel"], input[type="password"], select { background-color: #ffffff; border: 1px solid #bbbbbb; padding: 10px 12px; border-radius: 3px; width: 100%; font-size: 1rem; transition: border-color 0.2s; }
         input:focus, select:focus { border-color: var(--gov-primary); outline: none; box-shadow: 0 0 0 2px rgba(0, 75, 135, 0.2); }
         
         button { padding: 12px 24px; border: none; border-radius: 3px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: background-color 0.2s; display: inline-block; }
@@ -56,30 +56,12 @@
         
         .timer-banner { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 12px; border-radius: 3px; font-weight: bold; margin-bottom: 20px; display: none; text-align: center; }
 
-        /* 自訂長方形提示框 UI (取代原生 HTML alert/confirm) */
-        .custom-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 40, 70, 0.6);
-            display: none; justify-content: center; align-items: center; z-index: 10000;
-            padding: 20px;
-        }
-        .custom-modal-box {
-            background-color: #ffffff; border-radius: 4px; border: 1px solid var(--gov-border);
-            width: 100%; max-width: 460px; padding: 25px 20px; text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
-        .custom-modal-text {
-            font-size: 1.05rem; color: #222222; margin-bottom: 25px; line-height: 1.6;
-            white-space: pre-wrap; font-weight: 500; text-align: left;
-        }
-        .custom-modal-actions {
-            display: flex; gap: 10px; justify-content: center;
-        }
-        .custom-modal-btn {
-            background-color: #003366; color: #ffffff; border: none;
-            padding: 11px 20px; border-radius: 3px; font-weight: 600;
-            cursor: pointer; font-size: 1rem; flex: 1; transition: background-color 0.2s;
-        }
+        /* 自訂長方形提示框 UI */
+        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 40, 70, 0.6); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
+        .custom-modal-box { background-color: #ffffff; border-radius: 4px; border: 1px solid var(--gov-border); width: 100%; max-width: 460px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
+        .custom-modal-text { font-size: 1.05rem; color: #222222; margin-bottom: 25px; line-height: 1.6; white-space: pre-wrap; font-weight: 500; text-align: left; }
+        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .custom-modal-btn { background-color: #003366; color: #ffffff; border: none; padding: 11px 20px; border-radius: 3px; font-weight: 600; cursor: pointer; font-size: 1rem; flex: 1; transition: background-color 0.2s; }
         .custom-modal-btn:hover { background-color: #002244; }
         .custom-modal-btn.btn-cancel { background-color: #6c757d; }
         .custom-modal-btn.btn-cancel:hover { background-color: #5a6268; }
@@ -98,15 +80,39 @@
 
     <div id="tab-profile" class="tab-content active">
         <div class="card">
-            <div id="bind-section" style="display: none; padding: 40px 20px; text-align: center;">
-                <h2 style="margin-bottom: 15px; color: var(--gov-text-dark); font-size: 1.3rem;">登入身份檔案</h2>
-                <p style="color: var(--gov-text-muted); margin-bottom: 25px;">請輸入您的實體卡號或智能編號以檢視個人檔案。</p>
-                <div style="display: flex; gap: 10px; max-width: 400px; margin: 0 auto;">
-                    <input type="text" id="bind-card-input" placeholder="例如：1234567890" style="flex: 1;">
-                    <button class="btn-primary" onclick="bindMobileCard()">登入</button>
+            
+            <!-- 註冊與登入區塊 -->
+            <div id="auth-section" style="padding: 20px; text-align: center; max-width: 450px; margin: 0 auto; display: none;">
+                
+                <div id="login-form">
+                    <h2 style="margin-bottom: 10px; color: var(--gov-primary);">登入身份檔案</h2>
+                    <p style="color: var(--gov-text-muted); margin-bottom: 25px; font-size: 0.95rem;">請輸入您的帳號及密碼以檢視個人檔案。</p>
+                    <input type="text" id="login-acc" placeholder="使用者帳號" style="margin-bottom: 15px;">
+                    <input type="password" id="login-pwd" placeholder="登入密碼" style="margin-bottom: 20px;">
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-primary" style="flex:1;" onclick="loginAccount()">登入</button>
+                        <button class="btn-outline" style="flex:1;" onclick="toggleAuthMode('register')">首次註冊帳號</button>
+                    </div>
                 </div>
+
+                <div id="register-form" style="display: none; text-align: left;">
+                    <h2 style="margin-bottom: 10px; color: var(--gov-primary); text-align: center;">首次註冊身份綁定</h2>
+                    <p style="color: var(--gov-text-muted); margin-bottom: 15px; font-size: 0.9rem; text-align: center;">為保障安全，首次登入必須設定帳號密碼並核對您的身份資料。</p>
+                    <div class="form-group"><label>設定使用者帳號</label><input type="text" id="reg-acc" placeholder="請設定一個帳號名稱"></div>
+                    <div class="form-group"><label>設定密碼</label><input type="password" id="reg-pwd" placeholder="請設定密碼"></div>
+                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
+                    <div class="form-group"><label>登記姓名 (中/英)</label><input type="text" id="reg-name" placeholder="請輸入智能卡上的姓名"></div>
+                    <div class="form-group"><label>出生年月日</label><input type="date" id="reg-dob"></div>
+                    <div class="form-group"><label>智能咭號碼 (注意：非實體卡號碼)</label><input type="text" id="reg-smart" placeholder="例如：A1234"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 25px;">
+                        <button class="btn-success" style="flex:1;" onclick="registerAccount()">註冊並綁定</button>
+                        <button class="btn-outline" style="flex:1;" onclick="toggleAuthMode('login')">返回登入</button>
+                    </div>
+                </div>
+
             </div>
 
+            <!-- 已登入之個人檔案顯示 -->
             <div id="ic-card-display" style="display: none; flex-direction: column;">
                 <div class="card-title">已登記個人檔案資料</div>
                 <div class="info-grid">
@@ -117,9 +123,14 @@
                     <div class="info-label">登記性別</div> <div class="info-value" id="info-gender">--</div>
                     <div class="info-label">電話號碼</div> <div class="info-value" id="info-phone">--</div>
                     <div class="info-label">登記住址區域</div> <div class="info-value" id="info-region">--</div>
+                    <div class="info-label">系統過期時間</div> 
+                    <div class="info-value">
+                        <span id="info-expire">--</span>
+                        <span id="info-expire-status" style="color:var(--gov-danger); font-weight:bold; margin-left:10px;"></span>
+                    </div>
                 </div>
                 <div style="text-align: right; margin-top: 20px;">
-                    <button class="btn-outline" onclick="unbindCard()">登出系統</button>
+                    <button class="btn-outline" onclick="logoutAccount()">登出系統</button>
                 </div>
             </div>
         </div>
@@ -127,14 +138,10 @@
 
     <div id="tab-services" class="tab-content">
         <div class="card">
-            <div class="card-title">申領、更換及資料更新服務</div>
+            <div class="card-title">換領及資料更新服務</div>
             
             <div id="app-buttons-container">
-                <p style="color: var(--gov-text-muted); margin-bottom: 20px;">請選擇您需要的服務。</p>
-                <button class="btn-block" onclick="openApplicationForm('new')">
-                    <strong>首辦智能身份證明</strong><br>
-                    <span style="font-size: 0.9rem; color: var(--gov-text-muted);">適用於首次登記或未曾持有智能卡之市民 (需審核)</span>
-                </button>
+                <p style="color: var(--gov-text-muted); margin-bottom: 20px;">請選擇您需要的服務。(註：首辦新證僅限現場辦理)</p>
                 <button class="btn-block" onclick="openApplicationForm('replace')">
                     <strong>換領 / 補發智能身份證明</strong><br>
                     <span style="font-size: 0.9rem; color: var(--gov-text-muted);">適用於晶片過期、遺失或卡片損毀 (需審核)</span>
@@ -151,19 +158,6 @@
 
             <div id="form-container" style="display: none;">
                 <button class="btn-outline" style="margin-bottom: 20px;" onclick="resetApplicationView()">← 返回服務選單</button>
-
-                <form id="form-app-new" onsubmit="handleApplicationSubmit(event, 'NEW')" style="display: none;">
-                    <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：首辦智能身份證</h3>
-                    <div class="form-group"><label>中文 / 英文姓名 (必填)</label><input type="text" id="app-name" required></div>
-                    <div class="form-group"><label>出生日期 (必填)</label><input type="date" id="app-dob" required></div>
-                    <div class="form-group"><label>性別 (必填)</label>
-                        <select id="app-gender"><option value="男">男</option><option value="女">女</option></select>
-                    </div>
-                    <div class="form-group"><label>電話號碼 (必填)</label><input type="tel" id="app-phone" placeholder="例如：91234567" required></div>
-                    <div class="form-group"><label>居住地區 (必填)</label><input type="text" id="app-region" placeholder="例如：九龍區" required></div>
-                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
-                    <button type="submit" class="btn-success">確認並遞交申請</button>
-                </form>
 
                 <form id="form-app-replace" onsubmit="handleApplicationSubmit(event, 'REPLACE')" style="display: none;">
                     <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：換領智能身份證</h3>
@@ -193,7 +187,7 @@
         </div>
     </div>
 
-    <!-- 自訂提示框 (長方形區域，深藍色按鈕) -->
+    <!-- 自訂提示框 -->
     <div id="custom-alert-modal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="custom-alert-text" class="custom-modal-text"></div>
@@ -220,17 +214,18 @@
             getAllIdentities: async () => { const snap = await database.ref('/identities').once('value'); return snap.val() ? Object.values(snap.val()) : []; },
             getIdentity: async (id) => (await database.ref(`/identities/${id}`).once('value')).val(),
             addApplication: async (appData) => await database.ref(`/applications/${appData.id}`).set(appData),
-            updateIdentityDirectly: async (cardId, region, phone) => {
-                await database.ref(`/identities/${cardId}`).update({ region: region, phone: phone });
-            }
+            updateIdentityDirectly: async (cardId, region, phone) => { await database.ref(`/identities/${cardId}`).update({ region: region, phone: phone }); },
+            getAccount: async (acc) => (await database.ref(`/accounts/${acc}`).once('value')).val(),
+            setAccount: async (acc, data) => await database.ref(`/accounts/${acc}`).set(data)
         };
 
         let formTimer = null;
+        let expireInterval = null;
         let lastBroadcastMsg = "";
         let modalCallback = null;
         const TIMEOUT_SECONDS = 600;
+        const VALIDITY_MINUTES = 10;
 
-        /* 自訂長方形提示框邏輯 */
         function showCustomAlert(msg, onConfirm) {
             document.getElementById('custom-alert-text').innerText = msg;
             document.getElementById('custom-btn-cancel').style.display = 'none';
@@ -249,19 +244,14 @@
 
         function closeCustomModal(isConfirmed) {
             document.getElementById('custom-alert-modal').style.display = 'none';
-            if (modalCallback) {
-                const cb = modalCallback;
-                modalCallback = null;
-                cb(isConfirmed);
-            }
+            if (modalCallback) { const cb = modalCallback; modalCallback = null; cb(isConfirmed); }
         }
 
         window.onload = async () => {
-            await renderMobileBoundProfile();
+            await renderProfileState();
             listenBroadcast();
         };
 
-        /* 監聽後台系統廣播訊息，彈出長方形提示框 */
         function listenBroadcast() {
             database.ref('/broadcast').on('value', (snap) => {
                 const data = snap.val();
@@ -270,44 +260,89 @@
                         lastBroadcastMsg = data.text;
                         showCustomAlert("📢 系統廣播訊息：\n\n" + data.text);
                     }
-                } else {
-                    lastBroadcastMsg = "";
-                }
+                } else { lastBroadcastMsg = ""; }
             });
         }
 
         function switchTab(e, tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
             e.currentTarget.classList.add('active');
-
-            if(tabId !== 'tab-services') {
-                resetApplicationView();
-            }
+            if(tabId !== 'tab-services') resetApplicationView();
         }
 
-        async function renderMobileBoundProfile() {
-            const boundCardId = localStorage.getItem('my_bound_card_id');
-            const bindSection = document.getElementById('bind-section');
-            const icCardDisplay = document.getElementById('ic-card-display');
+        function toggleAuthMode(mode) {
+            document.getElementById('login-form').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
+        }
 
-            if (!boundCardId) {
-                bindSection.style.display = 'block';
+        async function registerAccount() {
+            const acc = document.getElementById('reg-acc').value.trim();
+            const pwd = document.getElementById('reg-pwd').value;
+            const name = document.getElementById('reg-name').value.trim();
+            const dob = document.getElementById('reg-dob').value;
+            const smart = document.getElementById('reg-smart').value.trim();
+
+            if (!acc || !pwd || !name || !dob || !smart) return showCustomAlert("請完整填寫所有首次註冊資料！");
+
+            const existingAcc = await DB.getAccount(acc);
+            if (existingAcc) return showCustomAlert("此帳號名稱已被使用，請選擇其他帳號。");
+
+            const allIdentities = await DB.getAllIdentities();
+            const matchRecord = allIdentities.find(i => i.smart_code === smart && i.name === name && i.dob === dob);
+
+            if (!matchRecord) return showCustomAlert("系統驗證失敗：您輸入的姓名、出生日期或智能咭號碼與系統紀錄不符！\n\n請注意首次註冊必須核對登記紀錄。");
+
+            await DB.setAccount(acc, { password: pwd, smart_code: smart });
+            showCustomAlert("✅ 註冊及綁定成功！請以新設定的帳號及密碼登入。");
+            document.getElementById('reg-pwd').value = "";
+            toggleAuthMode('login');
+        }
+
+        async function loginAccount() {
+            const acc = document.getElementById('login-acc').value.trim();
+            const pwd = document.getElementById('login-pwd').value;
+
+            if (!acc || !pwd) return showCustomAlert("請輸入使用者帳號及密碼！");
+
+            const accountData = await DB.getAccount(acc);
+            if (!accountData || accountData.password !== pwd) return showCustomAlert("帳號或登入密碼錯誤，請重試！");
+
+            localStorage.setItem('my_csis_account', acc);
+            document.getElementById('login-pwd').value = "";
+            await renderProfileState();
+        }
+
+        async function renderProfileState() {
+            const currentAcc = localStorage.getItem('my_csis_account');
+            const authSection = document.getElementById('auth-section');
+            const icCardDisplay = document.getElementById('ic-card-display');
+            if(expireInterval) clearInterval(expireInterval);
+
+            if (!currentAcc) {
+                authSection.style.display = 'block';
                 icCardDisplay.style.display = 'none';
                 return;
             }
 
-            const record = await DB.getIdentity(boundCardId);
-            if (!record) {
-                localStorage.removeItem('my_bound_card_id');
-                showCustomAlert("綁定資料已過期或被注銷，請重新登入。");
-                renderMobileBoundProfile();
-                return;
+            const accData = await DB.getAccount(currentAcc);
+            if (!accData) {
+                localStorage.removeItem('my_csis_account');
+                showCustomAlert("登入資料已失效，請重新登入。");
+                return renderProfileState();
             }
 
-            bindSection.style.display = 'none';
+            const allIdentities = await DB.getAllIdentities();
+            const record = allIdentities.find(i => i.smart_code === accData.smart_code);
+
+            if (!record) {
+                localStorage.removeItem('my_csis_account');
+                showCustomAlert("您的身份紀錄已被注銷或失效。");
+                return renderProfileState();
+            }
+
+            authSection.style.display = 'none';
             icCardDisplay.style.display = 'flex';
 
             document.getElementById('info-smartcode').innerText = record.smart_code || "未分配";
@@ -317,29 +352,32 @@
             document.getElementById('info-gender').innerText = record.gender || "未提供";
             document.getElementById('info-phone').innerText = record.phone || "未提供";
             document.getElementById('info-region').innerText = record.region || "未提供";
+
+            // 計算並同步顯示過期時間
+            const issueDate = new Date(record.issue_time);
+            const expireDate = new Date(issueDate.getTime() + VALIDITY_MINUTES * 60000);
+            document.getElementById('info-expire').innerText = expireDate.toLocaleString('zh-HK');
+            
+            const updateTimeStatus = () => {
+                const diffSecs = Math.floor((expireDate - new Date()) / 1000);
+                const statEl = document.getElementById('info-expire-status');
+                if(diffSecs > 0) {
+                    statEl.innerText = `(有效：剩餘 ${Math.floor(diffSecs/60)}分${diffSecs%60}秒)`;
+                    statEl.style.color = "var(--gov-success)";
+                } else {
+                    statEl.innerText = "(已過期)";
+                    statEl.style.color = "var(--gov-danger)";
+                }
+            };
+            updateTimeStatus();
+            expireInterval = setInterval(updateTimeStatus, 1000);
         }
 
-        async function bindMobileCard() {
-            const input = document.getElementById('bind-card-input').value.trim();
-            if (!input) return showCustomAlert("請輸入號碼！");
-            let record = await DB.getIdentity(input);
-            if (!record) {
-                const all = await DB.getAllIdentities();
-                record = all.find(i => i.smart_code === input || i.card_id === input);
-            }
-            if (record) {
-                localStorage.setItem('my_bound_card_id', record.card_id);
-                await renderMobileBoundProfile();
-            } else {
-                showCustomAlert("系統中找不到該記錄，請確認輸入是否正確。");
-            }
-        }
-
-        function unbindCard() {
-            showCustomConfirm("確定要登出系統嗎？", (confirmed) => {
+        function logoutAccount() {
+            showCustomConfirm("確定要登出您的身份檔案嗎？", (confirmed) => {
                 if (confirmed) {
-                    localStorage.removeItem('my_bound_card_id');
-                    renderMobileBoundProfile();
+                    localStorage.removeItem('my_csis_account');
+                    renderProfileState();
                 }
             });
         }
@@ -347,11 +385,8 @@
         function openApplicationForm(type) {
             document.getElementById('app-buttons-container').style.display = 'none';
             document.getElementById('form-container').style.display = 'block';
-            
-            document.getElementById('form-app-new').style.display = type === 'new' ? 'block' : 'none';
             document.getElementById('form-app-replace').style.display = type === 'replace' ? 'block' : 'none';
             document.getElementById('form-app-edit').style.display = type === 'edit' ? 'block' : 'none';
-            
             startFormTimer();
         }
 
@@ -360,8 +395,6 @@
             document.getElementById('timer-display').style.display = 'none';
             document.getElementById('form-container').style.display = 'none';
             document.getElementById('app-buttons-container').style.display = 'block';
-            
-            document.getElementById('form-app-new').reset();
             document.getElementById('form-app-replace').reset();
             document.getElementById('form-app-edit').reset();
         }
@@ -370,15 +403,12 @@
             clearInterval(formTimer);
             let timeLeft = TIMEOUT_SECONDS;
             document.getElementById('timer-display').style.display = 'block';
-            
             const updateDisplay = () => {
                 const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
                 const s = (timeLeft % 60).toString().padStart(2, '0');
                 document.getElementById('time-left').innerText = `${m}:${s}`;
             };
-            
             updateDisplay();
-            
             formTimer = setInterval(() => {
                 timeLeft--;
                 updateDisplay();
@@ -396,36 +426,26 @@
             
             showCustomConfirm(warningMsg, async (confirmed) => {
                 if (!confirmed) return;
-
                 const appId = 'APP-' + Date.now();
                 let appData = { id: appId, type: type, status: 'PENDING', timestamp: new Date().toLocaleString('zh-HK') };
                 
-                if (type === 'NEW') {
-                    appData.name = document.getElementById('app-name').value.trim();
-                    appData.dob = document.getElementById('app-dob').value;
-                    appData.gender = document.getElementById('app-gender').value;
-                    appData.phone = document.getElementById('app-phone').value.trim();
-                    appData.region = document.getElementById('app-region').value.trim();
-                } else {
-                    appData.oldCardId = document.getElementById('app-old-id').value.trim();
-                    appData.name = document.getElementById('app-rep-name').value.trim();
-                    appData.phone = document.getElementById('app-rep-phone').value.trim();
-                    appData.reason = document.getElementById('app-rep-reason').value;
-                }
+                appData.oldCardId = document.getElementById('app-old-id').value.trim();
+                appData.name = document.getElementById('app-rep-name').value.trim();
+                appData.phone = document.getElementById('app-rep-phone').value.trim();
+                appData.reason = document.getElementById('app-rep-reason').value;
+                
                 await DB.addApplication(appData);
                 showCustomAlert(`✅ 申請已成功遞交！\n\n系統參考編號: ${appId}\n請耐心等待管理員審核簽發。`);
-                
                 resetApplicationView();
             });
         }
 
         async function handleDirectEditSubmit(e) {
             e.preventDefault();
-            const warningMsg = "⚠️ 警告及法律聲明：\n根據《身份登記條例》，任何人故意提供虛假或誤導性資料，即屬違法犯罪行為。一經定罪，最高可被判處罰款及監禁。\n\n請確認資料真實無誤，是否確定要提交？";
+            const warningMsg = "⚠️ 警告及法律聲明：\n根據《身份登記條例》，任何人故意提供虛假或誤導性資料，即屬違法犯罪行為。\n\n請確認資料真實無誤，是否確定要提交？";
             
             showCustomConfirm(warningMsg, async (confirmed) => {
                 if (!confirmed) return;
-
                 const inputId = document.getElementById('edit-card-id').value.trim();
                 const newRegion = document.getElementById('edit-region').value.trim();
                 const newPhone = document.getElementById('edit-phone').value.trim();
@@ -436,16 +456,13 @@
                     record = all.find(i => i.smart_code === inputId || i.card_id === inputId);
                 }
 
-                if (!record) {
-                    showCustomAlert("錯誤：系統中未找到該憑證號碼或智能編號紀錄。");
-                    return;
-                }
+                if (!record) return showCustomAlert("錯誤：系統中未找到該憑證號碼或智能編號紀錄。");
 
                 await DB.updateIdentityDirectly(record.card_id, newRegion, newPhone);
                 showCustomAlert("✅ 個人資料已成功保存並即時生效！");
                 
                 resetApplicationView();
-                await renderMobileBoundProfile();
+                await renderProfileState();
             });
         }
     </script>
