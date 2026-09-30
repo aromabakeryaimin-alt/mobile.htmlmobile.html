@@ -1,470 +1,186 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>市民服務身份系統 (CSIS) - 市民入口網站</title>
-    <style>
-        :root {
-            --gov-primary: #004b87;
-            --gov-secondary: #f0f4f8;
-            --gov-text-dark: #333333;
-            --gov-text-muted: #666666;
-            --gov-border: #d1d9e6;
-            --gov-action: #0076a8;
-            --gov-danger: #c9302c;
-            --gov-success: #3c763d;
-            --gov-bg: #eaeff3;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-        body { background-color: var(--gov-bg); color: var(--gov-text-dark); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; }
+<html lang="zh-HK"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>市民服務身份系統 (CSIS) - 市民入口網站</title>
+<style>
+:root{--p:#004b87;--a:#0076a8;--bg:#eaeff3;--card:#fff;--sec:#f0f4f8;--bd:#d1d9e6;--tx:#222;--mut:#666;--ok:#2e7d32;--warn:#d9822b;--bad:#c9302c}
+@media(prefers-color-scheme:dark){:root{--p:#6fb3ec;--a:#2a8fc4;--bg:#0f1720;--card:#16212c;--sec:#1b2733;--bd:#2c3b4a;--tx:#e8eef4;--mut:#9fb0c0}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans HK","PingFang HK","Microsoft JhengHei","Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;min-height:100vh}
+header{background:var(--card);padding:16px 24px;border-top:5px solid var(--p);border-bottom:1px solid var(--bd)}
+h1{color:var(--p);font-size:1.3rem}h2,h3{color:var(--p);margin-bottom:10px}
+.tabs,main{max-width:900px;margin:0 auto;width:100%}.tabs{display:flex;margin-top:16px;background:var(--card);border-bottom:1px solid var(--bd)}
+.tb{flex:1;padding:14px;background:none;color:var(--mut);border:0;border-bottom:3px solid transparent;font-size:1rem;cursor:pointer}
+.tb.on{color:var(--p);border-color:var(--p);font-weight:700}
+.tc{display:none;padding:20px 12px}.tc.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:6px;padding:22px;margin-bottom:16px}.narrow{max-width:460px;margin:0 auto}
+input,select{width:100%;padding:10px 12px;margin:4px 0 14px;border:1px solid var(--bd);border-radius:4px;font-size:1rem;background:var(--card);color:var(--tx)}
+input[readonly]{background:var(--sec);color:var(--mut)}input:focus,select:focus,button:focus-visible{outline:2px solid var(--a);outline-offset:1px}
+label{font-weight:600;font-size:.92rem}
+button{padding:11px 20px;border:0;border-radius:4px;font-weight:600;font-size:1rem;cursor:pointer;background:var(--a);color:#fff}
+button:disabled{opacity:.5;cursor:wait}.sec{background:var(--card);color:var(--tx);border:1px solid var(--bd)}.ok{background:var(--ok)}
+.row{display:flex;gap:10px}.row>*{flex:1}.mut{color:var(--mut);font-size:.92rem}
+.svc{display:block;width:100%;text-align:left;background:var(--card);color:var(--p);border:1px solid var(--bd);margin-bottom:12px;padding:14px}
+.idcard{background:linear-gradient(135deg,#004b87,#0076a8);color:#fff;border-radius:12px;padding:22px;margin-bottom:16px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.ic-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.ic-top small{opacity:.8;letter-spacing:1px}.ic-top h2{color:#fff;font-size:1.6rem;margin:2px 0}
+#qr{background:#fff;padding:6px;border-radius:6px;line-height:0}
+.ic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px 16px;margin:16px 0}.ic-grid span{display:block;font-size:.78rem;opacity:.75}.ic-grid b{font-weight:600}
+.bar{height:8px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;width:100%;background:#7ee08a;transition:width 1s linear}
+.bar i.warn{background:#ffc266}.bar i.bad{background:#ff8a80}
+.note{font-size:.85rem;margin-top:8px;opacity:.9}
+.ap{padding:8px 0;border-bottom:1px solid var(--bd);font-size:.92rem}
+.timer{background:#fff3cd;color:#856404;padding:10px;border-radius:4px;font-weight:700;text-align:center;margin-bottom:14px;display:none}
+.ov{position:fixed;inset:0;background:rgba(0,40,70,.6);display:none;justify-content:center;align-items:center;z-index:99;padding:16px}
+.mb{background:var(--card);border-radius:6px;max-width:460px;width:100%;padding:22px}#cm-t{white-space:pre-wrap;margin-bottom:18px;font-weight:500}
+#cm-in{margin-bottom:16px}
+[hidden]{display:none!important}
+</style></head><body>
+<header><h1>市民服務身份系統 CSIS</h1></header>
+<nav class="tabs" role="tablist"><button class="tb on" data-t="t-p" role="tab">身份檔案</button><button class="tb" data-t="t-s" role="tab">網上申領及資料變更</button></nav>
+<main>
+<section id="t-p" class="tc on">
+ <div id="auth" class="card narrow" hidden>
+  <div id="lf"><h2>登入身份檔案</h2><p class="mut" style="margin-bottom:16px">請輸入帳號及密碼以檢視個人檔案。</p>
+   <label for="l-acc">使用者帳號</label><input id="l-acc" autocomplete="username">
+   <label for="l-pwd">登入密碼</label><input id="l-pwd" type="password" autocomplete="current-password">
+   <div class="row"><button onclick="run(login,this)">登入</button><button class="sec" onclick="mode('r')">首次註冊帳號</button></div></div>
+  <div id="rf" hidden><h2>首次註冊身份綁定</h2><p class="mut" style="margin-bottom:16px">須核對登記資料；密碼最少 8 個字元。</p>
+   <label for="r-acc">設定使用者帳號 (3-20 位英數字)</label><input id="r-acc" autocomplete="username">
+   <label for="r-pwd">設定密碼</label><input id="r-pwd" type="password" autocomplete="new-password">
+   <label for="r-name">登記姓名</label><input id="r-name">
+   <label for="r-dob">出生年月日</label><input id="r-dob" type="date">
+   <label for="r-sm">智能編號 (非實體卡號碼)</label><input id="r-sm" placeholder="例如：A1234">
+   <div class="row"><button class="ok" onclick="run(register,this)">註冊並綁定</button><button class="sec" onclick="mode('l')">返回登入</button></div></div>
+ </div>
+ <div id="prof" hidden>
+  <div class="idcard"><div class="ic-top"><div><small>智能身份證明 · DIGITAL ID</small><h2 id="p-name"></h2></div><div id="qr"></div></div>
+   <div class="ic-grid"><div><span>智能編號</span><b id="p-sc"></b></div><div><span>實體憑證號碼</span><b id="p-cid"></b></div><div><span>出生日期</span><b id="p-dob"></b></div><div><span>性別</span><b id="p-g"></b></div><div><span>電話</span><b id="p-ph"></b></div><div><span>登記地區</span><b id="p-rg"></b></div></div>
+   <div class="bar"><i id="bar"></i></div><div class="note" id="exp-txt"></div>
+   <div class="note">🔒 動態二維碼 <span id="qr-left">30</span> 秒後更新，截圖無效；職員可掃描核實。</div></div>
+  <div class="card"><h3>申請進度</h3><div id="app-list"></div></div>
+  <div style="text-align:right"><button class="sec" onclick="logout()">登出系統</button></div>
+ </div>
+</section>
+<section id="t-s" class="tc">
+ <div class="card"><h2>換領及資料更新服務</h2>
+  <div id="menu"><p class="mut" style="margin-bottom:16px">請先登入。(註：首辦新證僅限現場辦理)</p>
+   <button class="svc" onclick="openForm('rep')"><b>換領 / 補發智能身份證明</b><br><span class="mut">晶片過期、遺失或卡片損毀 (需審核)</span></button>
+   <button class="svc" onclick="openForm('ed')" style="border-left:4px solid var(--a)"><b>更改個人資料 (即時更新)</b><br><span class="mut">僅限登記地區及電話號碼，只可更改本人資料</span></button></div>
+  <div id="timer" class="timer">安全提示：此表格將於 <span id="tl">10:00</span> 後自動重置。</div>
+  <div id="fc" hidden><button class="sec" style="margin-bottom:16px" onclick="resetForm()">← 返回服務選單</button>
+   <form id="f-rep" hidden onsubmit="event.preventDefault();run(subRep,this.querySelector('[type=submit]'))"><h3>申請表：換領智能身份證</h3>
+    <label>智能編號</label><input id="rp-id" readonly><label>姓名</label><input id="rp-name" readonly>
+    <label for="rp-ph">電話號碼</label><input id="rp-ph" type="tel" required>
+    <label for="rp-re">換證原因</label><select id="rp-re"><option>晶片過期</option><option>卡片損壞</option><option>遺失補領</option></select>
+    <button type="submit" class="ok">確認並遞交申請</button></form>
+   <form id="f-ed" hidden onsubmit="event.preventDefault();run(subEd,this.querySelector('[type=submit]'))"><h3>變更個人登記資料 (即時保存)</h3>
+    <label for="ed-rg">新登記住址區域</label><input id="ed-rg" maxlength="20" required>
+    <label for="ed-ph">新聯絡電話號碼</label><input id="ed-ph" type="tel" required>
+    <button type="submit">保存並即時更新</button></form></div>
+ </div>
+</section></main>
+<div id="cm" class="ov" role="dialog" aria-modal="true"><div class="mb"><div id="cm-t"></div><input id="cm-in" type="password" hidden><div class="row"><button id="cm-ok">確認</button><button id="cm-no" class="sec" hidden>取消</button></div></div></div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+firebase.initializeApp({apiKey:"AIzaSyD42CHramMOT5yu6d0WhkMFs_5ZwQiPvPI",authDomain:"ks11-a4274.firebaseapp.com",databaseURL:"https://ks11-a4274-default-rtdb.firebaseio.com",projectId:"ks11-a4274"});
+const database=firebase.database(),$=id=>document.getElementById(id),enc=new TextEncoder();
+const VALIDITY_MINUTES=10,TT=600,SESSION_MIN=30,LEGAL="⚠️ 警告及法律聲明：\n任何人故意提供虛假或誤導性資料，即屬違法犯罪行為，一經定罪可被判罰款及監禁。\n\n請確認資料真實無誤，是否確定提交？";
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''),rnd=()=>hex(crypto.getRandomValues(new Uint8Array(16)));
+const sha=async s=>hex(await crypto.subtle.digest('SHA-256',enc.encode(s)));
+async function pbkdf2(p,salt){const k=await crypto.subtle.importKey('raw',enc.encode(p),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:100000,hash:'SHA-256'},k,256))}
+async function hmac(sec,msg){const k=await crypto.subtle.importKey('raw',enc.encode(sec),{name:'HMAC',hash:'SHA-256'},false,['sign']);return hex(await crypto.subtle.sign('HMAC',k,enc.encode(msg)))}
+async function audit(actor,act,detail){const r=database.ref('/audit'),l=(await r.orderByKey().limitToLast(1).once('value')).val(),prev=l?Object.values(l)[0].hash:'GENESIS',ts=Date.now();await r.push({ts,actor,act,detail:String(detail),prev,hash:await sha(prev+ts+actor+act+detail)})}
+const getId=async id=>(await database.ref('/identities/'+id).once('value')).val();
+async function findBySmart(sc){const ix=(await database.ref('/smartIndex/'+sc).once('value')).val();if(ix){const r=await getId(ix);if(r)return r}
+ const s=(await database.ref('/identities').orderByChild('smart_code').equalTo(sc).once('value')).val(),r=s?Object.values(s)[0]:null;if(r)database.ref('/smartIndex/'+sc).set(r.card_id);return r}
+const expOf=r=>r.expires_at||new Date(r.issue_time).getTime()+VALIDITY_MINUTES*60000;
+let mcb=null;
+function modal(msg,o={}){$('cm-t').textContent=msg;$('cm-no').hidden=!o.confirm;mcb=o.cb||null;$('cm').style.display='flex';$('cm-ok').focus()}
+function closeM(ok){$('cm').style.display='none';const c=mcb;mcb=null;if(c)c(ok)}
+$('cm-ok').onclick=()=>closeM(true);$('cm-no').onclick=()=>closeM(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('cm').style.display==='flex')closeM(false)});
+const say=m=>new Promise(r=>modal(m,{cb:r})),ask=m=>new Promise(r=>modal(m,{confirm:true,cb:r}));
+async function run(fn,btn){if(btn)btn.disabled=true;try{await fn()}catch(e){console.error(e);say('系統連線錯誤，請稍後再試。\n'+(e.code||e.message||''))}finally{if(btn)btn.disabled=false}}
 
-        header { background-color: #ffffff; padding: 20px 30px; border-top: 5px solid var(--gov-primary); border-bottom: 1px solid var(--gov-border); display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        header h1 { color: var(--gov-primary); font-size: 1.4rem; font-weight: 600; letter-spacing: 0.5px; }
-        
-        .tabs-header { display: flex; background-color: #ffffff; border-bottom: 1px solid var(--gov-border); max-width: 1000px; margin: 20px auto 0; width: 100%; }
-        .tab-btn { flex: 1; padding: 15px 20px; background: none; border: none; border-bottom: 3px solid transparent; color: var(--gov-text-muted); font-size: 1rem; cursor: pointer; transition: all 0.2s; font-weight: 500; }
-        .tab-btn:hover { background-color: var(--gov-secondary); }
-        .tab-btn.active { color: var(--gov-primary); border-bottom-color: var(--gov-primary); font-weight: 700; background-color: transparent; }
-        
-        .tab-content { display: none; max-width: 1000px; margin: 0 auto; width: 100%; padding: 25px 0; }
-        .tab-content.active { display: block; }
+let me=null,qr=null,curW=0,tickT=null,formT=null,offApps=null,pending=false,prevSt={},fails=0,lockUntil=0;
+const okPhone=p=>/^[0-9+\- ]{6,15}$/.test(p);
+document.querySelectorAll('.tb').forEach(b=>b.onclick=()=>tab(b));
+function tab(b){document.querySelectorAll('.tb,.tc').forEach(e=>e.classList.remove('on'));b.classList.add('on');$(b.dataset.t).classList.add('on');if(b.dataset.t!=='t-s')resetForm()}
+function mode(m){$('lf').hidden=m!=='l';$('rf').hidden=m!=='r'}
 
-        .card { background-color: #ffffff; border: 1px solid var(--gov-border); border-radius: 4px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .card-title { color: var(--gov-primary); font-size: 1.25rem; font-weight: 600; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--gov-secondary); }
-        
-        .info-grid { display: grid; grid-template-columns: 140px 1fr; gap: 15px 10px; margin-top: 10px; background-color: var(--gov-secondary); padding: 20px; border-radius: 4px; border: 1px solid var(--gov-border); }
-        .info-label { color: var(--gov-text-muted); font-weight: 600; }
-        .info-value { color: var(--gov-text-dark); font-weight: 500; }
+async function register(){
+ const v=id=>$(id).value.trim(),acc=v('r-acc'),pwd=$('r-pwd').value,name=v('r-name'),dob=$('r-dob').value,sm=v('r-sm').toUpperCase();
+ if(!/^[A-Za-z0-9_]{3,20}$/.test(acc))return say('帳號須為 3-20 位英數字或底線。');
+ if(pwd.length<8)return say('密碼最少 8 個字元。');
+ if(!name||!dob||!sm)return say('請完整填寫所有註冊資料！');
+ if((await database.ref('/accounts/'+acc).once('value')).exists())return say('此帳號名稱已被使用。');
+ const r=await findBySmart(sm);
+ if(!r||r.name!==name||r.dob!==dob)return say('系統驗證失敗：姓名、出生日期或智能編號與登記紀錄不符！');
+ if((await database.ref('/accounts').orderByChild('smart_code').equalTo(sm).once('value')).exists())return say('此智能編號已綁定其他帳號。');
+ const salt=rnd();await database.ref('/accounts/'+acc).set({salt,hash:await pbkdf2(pwd,salt),smart_code:sm});
+ await audit(acc,'REGISTER',sm);$('r-pwd').value='';mode('l');say('✅ 註冊成功！請登入。')}
 
-        .form-group { margin-bottom: 20px; }
-        label { display: block; color: var(--gov-text-dark); margin-bottom: 8px; font-weight: 600; font-size: 0.95rem; }
-        input[type="text"], input[type="date"], input[type="tel"], input[type="password"], select { background-color: #ffffff; border: 1px solid #bbbbbb; padding: 10px 12px; border-radius: 3px; width: 100%; font-size: 1rem; transition: border-color 0.2s; }
-        input:focus, select:focus { border-color: var(--gov-primary); outline: none; box-shadow: 0 0 0 2px rgba(0, 75, 135, 0.2); }
-        
-        button { padding: 12px 24px; border: none; border-radius: 3px; font-weight: 600; cursor: pointer; font-size: 1rem; transition: background-color 0.2s; display: inline-block; }
-        .btn-primary { background-color: var(--gov-action); color: #ffffff; }
-        .btn-primary:hover { background-color: #005a84; }
-        .btn-success { background-color: var(--gov-success); color: #ffffff; }
-        .btn-success:hover { background-color: #2b542c; }
-        .btn-outline { background-color: #ffffff; color: var(--gov-text-dark); border: 1px solid #cccccc; }
-        .btn-outline:hover { background-color: #f5f5f5; }
-        
-        .btn-block { width: 100%; margin-bottom: 15px; padding: 15px; font-size: 1.1rem; text-align: left; background-color: #ffffff; border: 1px solid var(--gov-border); color: var(--gov-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .btn-block:hover { background-color: var(--gov-secondary); border-color: var(--gov-primary); }
-        
-        .timer-banner { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 12px; border-radius: 3px; font-weight: bold; margin-bottom: 20px; display: none; text-align: center; }
+async function login(){
+ if(Date.now()<lockUntil)return say('嘗試次數過多，請稍後再試。');
+ const acc=$('l-acc').value.trim(),pwd=$('l-pwd').value;if(!acc||!pwd)return say('請輸入帳號及密碼！');
+ const a=(await database.ref('/accounts/'+acc).once('value')).val();let ok=false;
+ if(a&&a.hash)ok=await pbkdf2(pwd,a.salt)===a.hash;
+ else if(a&&a.password!==undefined&&a.password===pwd){ok=true;const salt=rnd();await database.ref('/accounts/'+acc).set({salt,hash:await pbkdf2(pwd,salt),smart_code:a.smart_code})} // 舊明文帳號自動升級
+ if(!ok){if(++fails>=5){lockUntil=Date.now()+60000;fails=0}return say('帳號或密碼錯誤！')}
+ fails=0;localStorage.setItem('csis_sess',JSON.stringify({acc,exp:Date.now()+SESSION_MIN*60000}));$('l-pwd').value='';await audit(acc,'LOGIN','');await render()}
 
-        /* 自訂長方形提示框 UI */
-        .custom-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 40, 70, 0.6); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
-        .custom-modal-box { background-color: #ffffff; border-radius: 4px; border: 1px solid var(--gov-border); width: 100%; max-width: 460px; padding: 25px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
-        .custom-modal-text { font-size: 1.05rem; color: #222222; margin-bottom: 25px; line-height: 1.6; white-space: pre-wrap; font-weight: 500; text-align: left; }
-        .custom-modal-actions { display: flex; gap: 10px; justify-content: center; }
-        .custom-modal-btn { background-color: #003366; color: #ffffff; border: none; padding: 11px 20px; border-radius: 3px; font-weight: 600; cursor: pointer; font-size: 1rem; flex: 1; transition: background-color 0.2s; }
-        .custom-modal-btn:hover { background-color: #002244; }
-        .custom-modal-btn.btn-cancel { background-color: #6c757d; }
-        .custom-modal-btn.btn-cancel:hover { background-color: #5a6268; }
-    </style>
-</head>
-<body>
+function logout(){ask('確定要登出嗎？').then(y=>{if(y){localStorage.removeItem('csis_sess');render()}})}
+function view(on){$('auth').hidden=on;$('prof').hidden=!on}
 
-    <header>
-        <h1>市民服務身份系統 CSIS</h1>
-    </header>
+async function render(){
+ clearInterval(tickT);if(offApps){offApps();offApps=null}
+ let s=null;try{s=JSON.parse(localStorage.getItem('csis_sess'))}catch{}
+ if(!s||s.exp<Date.now()){localStorage.removeItem('csis_sess');me=null;return view(false)}
+ const a=(await database.ref('/accounts/'+s.acc).once('value')).val(),r=a&&await findBySmart(a.smart_code);
+ if(!r){localStorage.removeItem('csis_sess');me=null;view(false);return say('登入已失效或身份紀錄已被注銷。')}
+ me={acc:s.acc,rec:r};view(true);
+ const set=(id,v)=>$(id).textContent=v||'未提供';
+ set('p-name',r.name);set('p-sc',r.smart_code);set('p-cid',r.card_id);set('p-dob',r.dob);set('p-g',r.gender);set('p-ph',r.phone);set('p-rg',r.region);
+ if(!r.qr_secret){r.qr_secret=rnd();await database.ref('/identities/'+r.card_id).update({qr_secret:r.qr_secret})}
+ $('qr').innerHTML='';qr=new QRCode($('qr'),{text:'CSIS',width:104,height:104});curW=0;tick();tickT=setInterval(tick,1000);watchApps(r)}
 
-    <div class="tabs-header">
-        <button class="tab-btn active" onclick="switchTab(event, 'tab-profile')">身份檔案</button>
-        <button class="tab-btn" onclick="switchTab(event, 'tab-services')">網上申領及資料變更</button>
-    </div>
+async function drawQR(){const r=me.rec,w=Math.floor(Date.now()/30000);qr.makeCode(`CSIS.${r.smart_code}.${w}.${(await hmac(r.qr_secret,r.smart_code+w)).slice(0,16)}`)}
+function tick(){if(!me)return;const r=me.rec,e=expOf(r),left=Math.floor((e-Date.now())/1000);let tot=e-new Date(r.issue_time).getTime();if(!(tot>0))tot=VALIDITY_MINUTES*6e4;
+ $('exp-txt').textContent=left>0?`有效期至 ${new Date(e).toLocaleString('zh-HK')}（剩餘 ${Math.floor(left/60)}分${left%60}秒）`:'⚠️ 已過期，請辦理換領';
+ const b=$('bar'),pc=Math.max(0,Math.min(100,(e-Date.now())/tot*100));b.style.width=pc+'%';b.className=left<=0?'bad':pc<20?'warn':'';
+ const w=Math.floor(Date.now()/30000);if(w!==curW){curW=w;drawQR()}$('qr-left').textContent=30-Math.floor(Date.now()/1000)%30}
 
-    <div id="tab-profile" class="tab-content active">
-        <div class="card">
-            
-            <!-- 註冊與登入區塊 -->
-            <div id="auth-section" style="padding: 20px; text-align: center; max-width: 450px; margin: 0 auto; display: none;">
-                
-                <div id="login-form">
-                    <h2 style="margin-bottom: 10px; color: var(--gov-primary);">登入身份檔案</h2>
-                    <p style="color: var(--gov-text-muted); margin-bottom: 25px; font-size: 0.95rem;">請輸入您的帳號及密碼以檢視個人檔案。</p>
-                    <input type="text" id="login-acc" placeholder="使用者帳號" style="margin-bottom: 15px;">
-                    <input type="password" id="login-pwd" placeholder="登入密碼" style="margin-bottom: 20px;">
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-primary" style="flex:1;" onclick="loginAccount()">登入</button>
-                        <button class="btn-outline" style="flex:1;" onclick="toggleAuthMode('register')">首次註冊帳號</button>
-                    </div>
-                </div>
+function watchApps(r){const q=database.ref('/applications').orderByChild('smart_code').equalTo(r.smart_code);
+ const h=q.on('value',s=>{const l=Object.values(s.val()||{}).sort((a,b)=>b.ts-a.ts).slice(0,5);pending=l.some(a=>a.status==='PENDING');
+  l.forEach(a=>{if(prevSt[a.id]==='PENDING'&&a.status==='APPROVED')say('✅ 您的換領申請已獲批准！新憑證已簽發，請留意有效期。');prevSt[a.id]=a.status});
+  $('app-list').innerHTML=l.length?l.map(a=>`<div class="ap"><b>${esc(a.id)}</b> · ${esc(a.reason)}<br>已遞交 → ${a.status==='PENDING'?'⏳ 審核中':'✅ 已簽發'}</div>`).join(''):'<p class="mut">暫無申請紀錄</p>'});
+ offApps=()=>q.off('value',h)}
 
-                <div id="register-form" style="display: none; text-align: left;">
-                    <h2 style="margin-bottom: 10px; color: var(--gov-primary); text-align: center;">首次註冊身份綁定</h2>
-                    <p style="color: var(--gov-text-muted); margin-bottom: 15px; font-size: 0.9rem; text-align: center;">為保障安全，首次登入必須設定帳號密碼並核對您的身份資料。</p>
-                    <div class="form-group"><label>設定使用者帳號</label><input type="text" id="reg-acc" placeholder="請設定一個帳號名稱"></div>
-                    <div class="form-group"><label>設定密碼</label><input type="password" id="reg-pwd" placeholder="請設定密碼"></div>
-                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
-                    <div class="form-group"><label>登記姓名 (中/英)</label><input type="text" id="reg-name" placeholder="請輸入智能卡上的姓名"></div>
-                    <div class="form-group"><label>出生年月日</label><input type="date" id="reg-dob"></div>
-                    <div class="form-group"><label>智能咭號碼 (注意：非實體卡號碼)</label><input type="text" id="reg-smart" placeholder="例如：A1234"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 25px;">
-                        <button class="btn-success" style="flex:1;" onclick="registerAccount()">註冊並綁定</button>
-                        <button class="btn-outline" style="flex:1;" onclick="toggleAuthMode('login')">返回登入</button>
-                    </div>
-                </div>
+function openForm(t){if(!me){say('請先登入身份檔案。');return tab(document.querySelector('[data-t=t-p]'))}
+ $('menu').hidden=true;$('fc').hidden=false;$('f-rep').hidden=t!=='rep';$('f-ed').hidden=t!=='ed';const r=me.rec;
+ $('rp-id').value=r.smart_code;$('rp-name').value=r.name;$('rp-ph').value=r.phone||'';$('ed-rg').value=r.region||'';$('ed-ph').value=r.phone||'';
+ clearInterval(formT);let left=TT;$('timer').style.display='block';const u=()=>$('tl').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');u();
+ formT=setInterval(()=>{left--;u();if(left<=0){resetForm();say('為保障資料安全，表單已逾時重置。')}},1000)}
+function resetForm(){clearInterval(formT);$('timer').style.display='none';$('fc').hidden=true;$('menu').hidden=false}
 
-            </div>
+async function subRep(){
+ if(pending)return say('您已有待處理的換領申請，請等待審核完成。');
+ const phone=$('rp-ph').value.trim();if(!okPhone(phone))return say('請輸入有效電話號碼。');
+ if(!await ask(LEGAL))return;
+ const id='APP-'+Date.now()+'-'+rnd().slice(0,4);
+ await database.ref('/applications/'+id).set({id,type:'REPLACE',status:'PENDING',ts:Date.now(),timestamp:new Date().toLocaleString('zh-HK'),acc:me.acc,smart_code:me.rec.smart_code,oldCardId:me.rec.smart_code,name:me.rec.name,phone,reason:$('rp-re').value});
+ await audit(me.acc,'APPLY_REPLACE',id);resetForm();say(`✅ 申請已遞交！\n參考編號：${id}\n可於「身份檔案」查看進度，批准後會即時通知。`)}
 
-            <!-- 已登入之個人檔案顯示 -->
-            <div id="ic-card-display" style="display: none; flex-direction: column;">
-                <div class="card-title">已登記個人檔案資料</div>
-                <div class="info-grid">
-                    <div class="info-label">登記姓名</div> <div class="info-value" id="info-name">--</div>
-                    <div class="info-label">智能編號</div> <div class="info-value" id="info-smartcode">--</div>
-                    <div class="info-label">實體憑證號碼</div> <div class="info-value" id="info-cardid">--</div>
-                    <div class="info-label">出生日期</div> <div class="info-value" id="info-dob">--</div>
-                    <div class="info-label">登記性別</div> <div class="info-value" id="info-gender">--</div>
-                    <div class="info-label">電話號碼</div> <div class="info-value" id="info-phone">--</div>
-                    <div class="info-label">登記住址區域</div> <div class="info-value" id="info-region">--</div>
-                    <div class="info-label">系統過期時間</div> 
-                    <div class="info-value">
-                        <span id="info-expire">--</span>
-                        <span id="info-expire-status" style="color:var(--gov-danger); font-weight:bold; margin-left:10px;"></span>
-                    </div>
-                </div>
-                <div style="text-align: right; margin-top: 20px;">
-                    <button class="btn-outline" onclick="logoutAccount()">登出系統</button>
-                </div>
-            </div>
-        </div>
-    </div>
+async function subEd(){
+ const region=$('ed-rg').value.trim(),phone=$('ed-ph').value.trim();
+ if(!region||region.length>20)return say('請輸入有效地區。');if(!okPhone(phone))return say('請輸入有效電話號碼。');
+ if(!await ask(LEGAL))return;
+ await database.ref('/identities/'+me.rec.card_id).update({region,phone});await audit(me.acc,'EDIT_PROFILE',me.rec.smart_code);
+ resetForm();await render();say('✅ 個人資料已保存並即時生效！')}
 
-    <div id="tab-services" class="tab-content">
-        <div class="card">
-            <div class="card-title">換領及資料更新服務</div>
-            
-            <div id="app-buttons-container">
-                <p style="color: var(--gov-text-muted); margin-bottom: 20px;">請選擇您需要的服務。(註：首辦新證僅限現場辦理)</p>
-                <button class="btn-block" onclick="openApplicationForm('replace')">
-                    <strong>換領 / 補發智能身份證明</strong><br>
-                    <span style="font-size: 0.9rem; color: var(--gov-text-muted);">適用於晶片過期、遺失或卡片損毀 (需審核)</span>
-                </button>
-                <button class="btn-block" onclick="openApplicationForm('edit')" style="border-left: 4px solid var(--gov-action);">
-                    <strong>更改個人資料 (即時更新)</strong><br>
-                    <span style="font-size: 0.9rem; color: var(--gov-text-muted);">僅限修改登記地區及電話號碼，提交後自動生效無需審核</span>
-                </button>
-            </div>
-
-            <div id="timer-display" class="timer-banner">
-                系統安全提示：為保護隱私，此表格將於 <span id="time-left">10:00</span> 後自動登出重置。
-            </div>
-
-            <div id="form-container" style="display: none;">
-                <button class="btn-outline" style="margin-bottom: 20px;" onclick="resetApplicationView()">← 返回服務選單</button>
-
-                <form id="form-app-replace" onsubmit="handleApplicationSubmit(event, 'REPLACE')" style="display: none;">
-                    <h3 style="margin-bottom: 20px; color: var(--gov-primary);">填寫申請表：換領智能身份證</h3>
-                    <div class="form-group"><label>原有實體卡號或智能卡編號 (必填)</label><input type="text" id="app-old-id" required></div>
-                    <div class="form-group"><label>姓名 (必填)</label><input type="text" id="app-rep-name" required></div>
-                    <div class="form-group"><label>電話號碼 (必填)</label><input type="tel" id="app-rep-phone" required></div>
-                    <div class="form-group"><label>換證原因 (必填)</label>
-                        <select id="app-rep-reason">
-                            <option value="晶片過期">晶片/資料過期</option><option value="卡片損壞">卡片損壞/晶片失效</option>
-                            <option value="遺失補領">遺失補領</option>
-                        </select>
-                    </div>
-                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
-                    <button type="submit" class="btn-success">確認並遞交申請</button>
-                </form>
-
-                <form id="form-app-edit" onsubmit="handleDirectEditSubmit(event)" style="display: none;">
-                    <h3 style="margin-bottom: 10px; color: var(--gov-primary);">變更個人登記資料 (即時保存)</h3>
-                    <p style="color: var(--gov-text-muted); margin-bottom: 20px; font-size:0.9rem;">依據系統規範，此處僅供更改「登記地區」及「電話號碼」。</p>
-                    <div class="form-group"><label>請輸入實體憑證號碼或智能編號進行驗證 (必填)</label><input type="text" id="edit-card-id" required></div>
-                    <div class="form-group"><label>新登記住址區域 (必填)</label><input type="text" id="edit-region" placeholder="輸入新地區" required></div>
-                    <div class="form-group"><label>新聯絡電話號碼 (必填)</label><input type="tel" id="edit-phone" placeholder="輸入新電話號碼" required></div>
-                    <hr style="border:0; border-top: 1px solid var(--gov-border); margin: 20px 0;">
-                    <button type="submit" class="btn-primary">保存並即時更新</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- 自訂提示框 -->
-    <div id="custom-alert-modal" class="custom-modal-overlay">
-        <div class="custom-modal-box">
-            <div id="custom-alert-text" class="custom-modal-text"></div>
-            <div class="custom-modal-actions">
-                <button id="custom-btn-confirm" class="custom-modal-btn" onclick="closeCustomModal(true)">確認</button>
-                <button id="custom-btn-cancel" class="custom-modal-btn btn-cancel" style="display:none;" onclick="closeCustomModal(false)">取消</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyD42CHramMOT5yu6d0WhkMFs_5ZwQiPvPI",
-            authDomain: "ks11-a4274.firebaseapp.com",
-            databaseURL: "https://ks11-a4274-default-rtdb.firebaseio.com",
-            projectId: "ks11-a4274"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        const DB = {
-            getAllIdentities: async () => { const snap = await database.ref('/identities').once('value'); return snap.val() ? Object.values(snap.val()) : []; },
-            getIdentity: async (id) => (await database.ref(`/identities/${id}`).once('value')).val(),
-            addApplication: async (appData) => await database.ref(`/applications/${appData.id}`).set(appData),
-            updateIdentityDirectly: async (cardId, region, phone) => { await database.ref(`/identities/${cardId}`).update({ region: region, phone: phone }); },
-            getAccount: async (acc) => (await database.ref(`/accounts/${acc}`).once('value')).val(),
-            setAccount: async (acc, data) => await database.ref(`/accounts/${acc}`).set(data)
-        };
-
-        let formTimer = null;
-        let expireInterval = null;
-        let lastBroadcastMsg = "";
-        let modalCallback = null;
-        const TIMEOUT_SECONDS = 600;
-        const VALIDITY_MINUTES = 10;
-
-        function showCustomAlert(msg, onConfirm) {
-            document.getElementById('custom-alert-text').innerText = msg;
-            document.getElementById('custom-btn-cancel').style.display = 'none';
-            document.getElementById('custom-btn-confirm').innerText = '確認';
-            modalCallback = onConfirm || null;
-            document.getElementById('custom-alert-modal').style.display = 'flex';
-        }
-
-        function showCustomConfirm(msg, onConfirm) {
-            document.getElementById('custom-alert-text').innerText = msg;
-            document.getElementById('custom-btn-cancel').style.display = 'block';
-            document.getElementById('custom-btn-confirm').innerText = '確認';
-            modalCallback = onConfirm || null;
-            document.getElementById('custom-alert-modal').style.display = 'flex';
-        }
-
-        function closeCustomModal(isConfirmed) {
-            document.getElementById('custom-alert-modal').style.display = 'none';
-            if (modalCallback) { const cb = modalCallback; modalCallback = null; cb(isConfirmed); }
-        }
-
-        window.onload = async () => {
-            await renderProfileState();
-            listenBroadcast();
-        };
-
-        function listenBroadcast() {
-            database.ref('/broadcast').on('value', (snap) => {
-                const data = snap.val();
-                if (data && data.text) {
-                    if (data.text !== lastBroadcastMsg) {
-                        lastBroadcastMsg = data.text;
-                        showCustomAlert("📢 系統廣播訊息：\n\n" + data.text);
-                    }
-                } else { lastBroadcastMsg = ""; }
-            });
-        }
-
-        function switchTab(e, tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            e.currentTarget.classList.add('active');
-            if(tabId !== 'tab-services') resetApplicationView();
-        }
-
-        function toggleAuthMode(mode) {
-            document.getElementById('login-form').style.display = mode === 'login' ? 'block' : 'none';
-            document.getElementById('register-form').style.display = mode === 'register' ? 'block' : 'none';
-        }
-
-        async function registerAccount() {
-            const acc = document.getElementById('reg-acc').value.trim();
-            const pwd = document.getElementById('reg-pwd').value;
-            const name = document.getElementById('reg-name').value.trim();
-            const dob = document.getElementById('reg-dob').value;
-            const smart = document.getElementById('reg-smart').value.trim();
-
-            if (!acc || !pwd || !name || !dob || !smart) return showCustomAlert("請完整填寫所有首次註冊資料！");
-
-            const existingAcc = await DB.getAccount(acc);
-            if (existingAcc) return showCustomAlert("此帳號名稱已被使用，請選擇其他帳號。");
-
-            const allIdentities = await DB.getAllIdentities();
-            const matchRecord = allIdentities.find(i => i.smart_code === smart && i.name === name && i.dob === dob);
-
-            if (!matchRecord) return showCustomAlert("系統驗證失敗：您輸入的姓名、出生日期或智能咭號碼與系統紀錄不符！\n\n請注意首次註冊必須核對登記紀錄。");
-
-            await DB.setAccount(acc, { password: pwd, smart_code: smart });
-            showCustomAlert("✅ 註冊及綁定成功！請以新設定的帳號及密碼登入。");
-            document.getElementById('reg-pwd').value = "";
-            toggleAuthMode('login');
-        }
-
-        async function loginAccount() {
-            const acc = document.getElementById('login-acc').value.trim();
-            const pwd = document.getElementById('login-pwd').value;
-
-            if (!acc || !pwd) return showCustomAlert("請輸入使用者帳號及密碼！");
-
-            const accountData = await DB.getAccount(acc);
-            if (!accountData || accountData.password !== pwd) return showCustomAlert("帳號或登入密碼錯誤，請重試！");
-
-            localStorage.setItem('my_csis_account', acc);
-            document.getElementById('login-pwd').value = "";
-            await renderProfileState();
-        }
-
-        async function renderProfileState() {
-            const currentAcc = localStorage.getItem('my_csis_account');
-            const authSection = document.getElementById('auth-section');
-            const icCardDisplay = document.getElementById('ic-card-display');
-            if(expireInterval) clearInterval(expireInterval);
-
-            if (!currentAcc) {
-                authSection.style.display = 'block';
-                icCardDisplay.style.display = 'none';
-                return;
-            }
-
-            const accData = await DB.getAccount(currentAcc);
-            if (!accData) {
-                localStorage.removeItem('my_csis_account');
-                showCustomAlert("登入資料已失效，請重新登入。");
-                return renderProfileState();
-            }
-
-            const allIdentities = await DB.getAllIdentities();
-            const record = allIdentities.find(i => i.smart_code === accData.smart_code);
-
-            if (!record) {
-                localStorage.removeItem('my_csis_account');
-                showCustomAlert("您的身份紀錄已被注銷或失效。");
-                return renderProfileState();
-            }
-
-            authSection.style.display = 'none';
-            icCardDisplay.style.display = 'flex';
-
-            document.getElementById('info-smartcode').innerText = record.smart_code || "未分配";
-            document.getElementById('info-name').innerText = record.name;
-            document.getElementById('info-cardid').innerText = record.card_id;
-            document.getElementById('info-dob').innerText = record.dob || "未提供";
-            document.getElementById('info-gender').innerText = record.gender || "未提供";
-            document.getElementById('info-phone').innerText = record.phone || "未提供";
-            document.getElementById('info-region').innerText = record.region || "未提供";
-
-            // 計算並同步顯示過期時間
-            const issueDate = new Date(record.issue_time);
-            const expireDate = new Date(issueDate.getTime() + VALIDITY_MINUTES * 60000);
-            document.getElementById('info-expire').innerText = expireDate.toLocaleString('zh-HK');
-            
-            const updateTimeStatus = () => {
-                const diffSecs = Math.floor((expireDate - new Date()) / 1000);
-                const statEl = document.getElementById('info-expire-status');
-                if(diffSecs > 0) {
-                    statEl.innerText = `(有效：剩餘 ${Math.floor(diffSecs/60)}分${diffSecs%60}秒)`;
-                    statEl.style.color = "var(--gov-success)";
-                } else {
-                    statEl.innerText = "(已過期)";
-                    statEl.style.color = "var(--gov-danger)";
-                }
-            };
-            updateTimeStatus();
-            expireInterval = setInterval(updateTimeStatus, 1000);
-        }
-
-        function logoutAccount() {
-            showCustomConfirm("確定要登出您的身份檔案嗎？", (confirmed) => {
-                if (confirmed) {
-                    localStorage.removeItem('my_csis_account');
-                    renderProfileState();
-                }
-            });
-        }
-
-        function openApplicationForm(type) {
-            document.getElementById('app-buttons-container').style.display = 'none';
-            document.getElementById('form-container').style.display = 'block';
-            document.getElementById('form-app-replace').style.display = type === 'replace' ? 'block' : 'none';
-            document.getElementById('form-app-edit').style.display = type === 'edit' ? 'block' : 'none';
-            startFormTimer();
-        }
-
-        function resetApplicationView() {
-            clearInterval(formTimer);
-            document.getElementById('timer-display').style.display = 'none';
-            document.getElementById('form-container').style.display = 'none';
-            document.getElementById('app-buttons-container').style.display = 'block';
-            document.getElementById('form-app-replace').reset();
-            document.getElementById('form-app-edit').reset();
-        }
-
-        function startFormTimer() {
-            clearInterval(formTimer);
-            let timeLeft = TIMEOUT_SECONDS;
-            document.getElementById('timer-display').style.display = 'block';
-            const updateDisplay = () => {
-                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-                const s = (timeLeft % 60).toString().padStart(2, '0');
-                document.getElementById('time-left').innerText = `${m}:${s}`;
-            };
-            updateDisplay();
-            formTimer = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-                if (timeLeft <= 0) {
-                    clearInterval(formTimer);
-                    showCustomAlert("為保障資料安全，表單已逾時重置。");
-                    resetApplicationView();
-                }
-            }, 1000);
-        }
-
-        async function handleApplicationSubmit(e, type) {
-            e.preventDefault();
-            const warningMsg = "⚠️ 警告及法律聲明：\n根據相關法例，任何人士故意填報虛假或誤導性資料，即屬違法犯罪行為。一經定罪，最高可被判處罰款及監禁。\n\n請確認以上資料真實無誤，是否確定要提交申請？";
-            
-            showCustomConfirm(warningMsg, async (confirmed) => {
-                if (!confirmed) return;
-                const appId = 'APP-' + Date.now();
-                let appData = { id: appId, type: type, status: 'PENDING', timestamp: new Date().toLocaleString('zh-HK') };
-                
-                appData.oldCardId = document.getElementById('app-old-id').value.trim();
-                appData.name = document.getElementById('app-rep-name').value.trim();
-                appData.phone = document.getElementById('app-rep-phone').value.trim();
-                appData.reason = document.getElementById('app-rep-reason').value;
-                
-                await DB.addApplication(appData);
-                showCustomAlert(`✅ 申請已成功遞交！\n\n系統參考編號: ${appId}\n請耐心等待管理員審核簽發。`);
-                resetApplicationView();
-            });
-        }
-
-        async function handleDirectEditSubmit(e) {
-            e.preventDefault();
-            const warningMsg = "⚠️ 警告及法律聲明：\n根據《身份登記條例》，任何人故意提供虛假或誤導性資料，即屬違法犯罪行為。\n\n請確認資料真實無誤，是否確定要提交？";
-            
-            showCustomConfirm(warningMsg, async (confirmed) => {
-                if (!confirmed) return;
-                const inputId = document.getElementById('edit-card-id').value.trim();
-                const newRegion = document.getElementById('edit-region').value.trim();
-                const newPhone = document.getElementById('edit-phone').value.trim();
-
-                let record = await DB.getIdentity(inputId);
-                if (!record) {
-                    const all = await DB.getAllIdentities();
-                    record = all.find(i => i.smart_code === inputId || i.card_id === inputId);
-                }
-
-                if (!record) return showCustomAlert("錯誤：系統中未找到該憑證號碼或智能編號紀錄。");
-
-                await DB.updateIdentityDirectly(record.card_id, newRegion, newPhone);
-                showCustomAlert("✅ 個人資料已成功保存並即時生效！");
-                
-                resetApplicationView();
-                await renderProfileState();
-            });
-        }
-    </script>
-</body>
-</html>
+window.onload=()=>{render();
+ database.ref('/broadcast').on('value',s=>{const d=s.val();if(!d||!d.text||(d.expires_at&&d.expires_at<Date.now()))return;
+  if(localStorage.getItem('csis_bc')!==String(d.updated_at)){localStorage.setItem('csis_bc',String(d.updated_at));say('📢 系統廣播訊息：\n\n'+d.text)}})};
+</script></body></html>
